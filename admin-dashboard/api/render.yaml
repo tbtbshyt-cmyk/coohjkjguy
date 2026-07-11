@@ -1,0 +1,37 @@
+# Render.com Blueprint — one-click deploy
+# Visit: https://render.com/blueprint/import?repo=<your-repo>
+services:
+  - type: web
+    name: abu-bishar-api
+    runtime: node
+    plan: starter
+    region: singapore
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /api/v1/abecp/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_PREFIX
+        value: /api/v1/abecp
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true
+        sync: false
+      - key: JWT_ACCESS_TTL
+        value: 900
+      - key: JWT_REFRESH_TTL
+        value: 2592000
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: CORS_ORIGINS
+        value: "https://abu-bishar.com,https://www.abu-bishar.com"
+      - key: CDN_BASE_URL
+        value: https://cdn.abu-bishar.com

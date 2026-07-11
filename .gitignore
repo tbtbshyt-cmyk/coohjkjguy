@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.pub-cache/
+.dart_tool/
+
+# Production builds
+dist/
+build/
+.next/
+out/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Logs
+*.log
+logs/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Tests
+coverage/
+
+# Mobile
+mobile-app/build/
+mobile-app/.flutter-plugins
+mobile-app/.flutter-plugins-dependencies
+mobile-app/.packages
+mobile-app/.pub/
+mobile-app/android/.gradle/
+mobile-app/android/local.properties
+mobile-app/android/key.properties
+mobile-app/android/app/release/
+mobile-app/android/.cxx/
+mobile-app/ios/Pods/
+mobile-app/ios/.symlinks/
+
+# Prisma
+admin-dashboard/api/prisma/migrations/dev/
+
+# OS
+*.swp
+*.swo
+*~

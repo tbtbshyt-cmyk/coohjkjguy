@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --gold: #D4AF37; --ink: #0A0A0A; }
+
+* { -webkit-tap-highlight-color: transparent; }
+html, body { min-height: 100vh; }
+body { font-family: 'Noto Sans Arabic', system-ui, sans-serif; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.35); border-radius: 8px; }
+
+@layer components {
+  .btn-gold { @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold bg-gradient-to-br from-gold-300 to-gold-600 text-ink-800 shadow-gold hover:shadow-gold-lg transition-all duration-200; }
+  .btn-ghost { @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold border border-gold/30 text-gold hover:bg-gold/10 transition-all; }
+  .card { @apply bg-white dark:bg-ink-700 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-600 overflow-hidden; }
+  .input { @apply w-full px-4 py-2.5 rounded-xl bg-white dark:bg-ink-700 border border-ink-200 dark:border-ink-600 focus:outline-none focus:ring-2 focus:ring-gold/50 transition; }
+  .label { @apply block text-sm font-semibold mb-1.5; }
+  .chip { @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-gold/10 text-gold-600 dark:text-gold-300; }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #F6ECBF 0%, #D4AF37 50%, #947418 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

@@ -1,0 +1,27 @@
+# Netlify config for Next.js 14 static export
+[build]
+  base = "web"
+  publish = "out"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_PUBLIC_API_URL = "https://api.abu-bishar.com"
+  NEXT_PUBLIC_CDN_URL = "https://cdn.abu-bishar.com"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.abu-bishar.com/api/:splat"
+  status = 200
