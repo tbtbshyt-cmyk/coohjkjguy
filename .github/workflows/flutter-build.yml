@@ -1,0 +1,100 @@
+name: Flutter Build (APK + AAB + iOS)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile-app/**'
+      - '.github/workflows/flutter-build.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: '3.24.3'
+
+jobs:
+  build-android-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        working-directory: ./mobile-app
+        run: flutter pub get
+      - name: Verify formatting + analyze
+        working-directory: ./mobile-app
+        run: |
+          dart format --output=none --set-exit-if-changed lib/ || true
+          flutter analyze --no-pub || true
+      - name: Build split-per-abi APK (release)
+        working-directory: ./mobile-app
+        run: |
+          flutter build apk --release --split-per-abi \
+            --dart-define=API_BASE_URL=${{ vars.PRODUCTION_API_URL }} \
+            --dart-define=CDN_URL=${{ vars.CDN_URL }}
+      - name: Build universal APK
+        working-directory: ./mobile-app
+        run: flutter build apk --release
+      - name: Build AAB for Play Store
+        working-directory: ./mobile-app
+        run: flutter build appbundle --release
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-builds
+          path: |
+            mobile-app/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            mobile-app/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            mobile-app/build/app/outputs/flutter-apk/app-release.apk
+            mobile-app/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+  build-ios:
+    name: Build iOS (no-codesign)
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        working-directory: ./mobile-app
+        run: flutter pub get
+      - name: Install pods
+        working-directory: ./mobile-app/ios
+        run: pod install --repo-update
+      - name: Build iOS (no codesign)
+        working-directory: ./mobile-app
+        run: |
+          flutter build ios --release --no-codesign \
+            --dart-define=API_BASE_URL=${{ vars.PRODUCTION_API_URL }} \
+            --dart-define=CDN_URL=${{ vars.CDN_URL }}
+      - name: Create .ipa
+        working-directory: ./mobile-app
+        run: |
+          mkdir -p build/ios/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/Payload/
+          cd build/ios && zip -qr Runner.ipa Payload/
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: mobile-app/build/ios/Runner.ipa
+          retention-days: 30
