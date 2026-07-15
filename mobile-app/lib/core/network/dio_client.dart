@@ -28,7 +28,7 @@ Dio buildDioClient() {
   ));
 
   // Cache GET requests on disk for offline browsing
-  final cacheStore = HiveCacheStore(HiveBoxes.cacheBox);
+  final cacheStore = HiveCacheStore.fromBox(HiveBoxes.cacheBox);
   dio.interceptors.add(DioCacheInterceptor(
     options: CacheOptions(
       store: cacheStore,
