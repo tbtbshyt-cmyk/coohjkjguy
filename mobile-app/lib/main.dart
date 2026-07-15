@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/router.dart';
@@ -27,10 +26,6 @@ Future<void> main() async {
   await Hive.initFlutter();
   await HiveBoxes.init();
 
-  // Init Firebase (FCM for push notifications)
-  if (kFirebaseEnabled) {
-    await Firebase.initializeApp();
-  }
 
   // Build Dio HTTP client
   final dio = buildDioClient();
@@ -76,4 +71,3 @@ class _AbuBisharAppState extends ConsumerState<AbuBisharApp> {
   }
 }
 
-const bool kFirebaseEnabled = bool.fromEnvironment('FIREBASE_ENABLED');
