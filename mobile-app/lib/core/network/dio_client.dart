@@ -13,7 +13,7 @@ const _kAccessToken = 'abv_admin_token';
 const _kRefreshToken = 'abv_refresh_token';
 const _kGuestToken = 'abv_guest_token';
 
-final dioProvider = Provider<Dio>((_) => throw UnimplementedError('overridden in main'));
+final dioProvider = Provider<Dio>((ref) => buildDioClient());
 
 Dio buildDioClient() {
   final dio = Dio(BaseOptions(

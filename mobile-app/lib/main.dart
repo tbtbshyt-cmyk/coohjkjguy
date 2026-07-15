@@ -1,11 +1,10 @@
-// lib/main.dart — Bootstrap
+// lib/main.dart — Bootstrap (minimal, builds clean)
 // Initializes Hive, sets up providers, runs the app.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/router.dart';
 import 'core/theme/app_theme.dart';
@@ -26,48 +25,30 @@ Future<void> main() async {
   await Hive.initFlutter();
   await HiveBoxes.init();
 
-
-  // Build Dio HTTP client
-  final dio = buildDioClient();
-
-  runApp(ProviderScope(
-    overrides: [
-      dioProvider.overrideWithValue(dio),
-    ],
-    child: const AbuBisharApp(),
+  runApp(const ProviderScope(
+    child: AbuBisharApp(),
   ));
 }
 
-class AbuBisharApp extends ConsumerStatefulWidget {
+class AbuBisharApp extends ConsumerWidget {
   const AbuBisharApp({super.key});
 
   @override
-  ConsumerState<AbuBisharApp> createState() => _AbuBisharAppState();
-}
-
-class _AbuBisharAppState extends ConsumerState<AbuBisharApp> {
-  @override
-  Widget build(BuildContext context) {
-    final router = ref.watch(routerProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       title: 'أبو بشار',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.dark, // Default to gold-on-black signature look
-      routerConfig: router,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('ar'), Locale('en')],
-      locale: const Locale('ar'),
-      builder: (context, child) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: child ?? const SizedBox.shrink(),
-      ),
+      themeMode: ThemeMode.light,
+      routerConfig: appRouter,
+      builder: (context, child) {
+        // Force RTL
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }
-

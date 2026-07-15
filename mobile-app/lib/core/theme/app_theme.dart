@@ -15,6 +15,17 @@ class AppColors {
 }
 
 class AppTheme {
+  // Color aliases used across the app
+  static const Color primary = AppColors.ink;
+  static const Color accent = AppColors.gold;
+  static const Color background = AppColors.ink;
+  static const Color surface = AppColors.inkSoft;
+  static const Color surfaceLight = AppColors.inkCard;
+  static const Color divider = Color(0x33FFFFFF);
+  static const Color textPrimary = Colors.white;
+  static const Color textSecondary = AppColors.muted;
+  static const Color textMuted = AppColors.muted;
+
   static ThemeData light() => _build(Brightness.light);
   static ThemeData dark() => _build(Brightness.dark);
 
@@ -48,7 +59,7 @@ class AppTheme {
           fontWeight: FontWeight.bold,
         ),
       ),
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: isDark ? AppColors.inkCard : Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

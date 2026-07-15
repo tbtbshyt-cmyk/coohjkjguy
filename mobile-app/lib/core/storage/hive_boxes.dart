@@ -18,7 +18,7 @@ class HiveBoxes {
   static late Box settingsBox;
   static late Box cartBox;
   static late Box wishlistBox;
-  static late Box cacheBox;
+  static late Box<String> cacheBox;
 
   static Future<void> init() async {
     appBox = await Hive.openBox(app);
@@ -28,7 +28,7 @@ class HiveBoxes {
     settingsBox = await Hive.openBox(settings);
     cartBox = await Hive.openBox(cart);
     wishlistBox = await Hive.openBox(wishlist);
-    cacheBox = await Hive.openBox(cache);
+    cacheBox = await Hive.openBox<String>(cache);
   }
 
   static Future<void> clearAll() async {
