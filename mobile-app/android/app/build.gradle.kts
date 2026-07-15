@@ -49,10 +49,16 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Split per ABI for smaller APKs
-            ndk {
-                abiFilters += listOf("armeabi-v7a", "arm64-v8a")
-            }
+        }
+    }
+
+    // Split per ABI for smaller APKs (no need to set ndk.abiFilters when splits are used)
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a")
+            isUniversalApk = true
         }
     }
 }
