@@ -39,6 +39,12 @@ android {
                 keyPassword = keystoreProperties["keyPassword"] as String?
                 storeFile = file(keystoreProperties["storeFile"] as String)
                 storePassword = keystoreProperties["storePassword"] as String?
+            } else {
+                // Use debug keystore for CI builds (replace with real keystore for production)
+                storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
             }
         }
     }
