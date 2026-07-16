@@ -1,7 +1,5 @@
 // lib/core/network/dio_client.dart
 import 'package:dio/dio.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
@@ -27,17 +25,18 @@ Dio buildDioClient() {
     },
   ));
 
-  // Cache GET requests on disk for offline browsing
-  final cacheStore = HiveCacheStore.fromBox(HiveBoxes.cacheBox);
-  dio.interceptors.add(DioCacheInterceptor(
-    options: CacheOptions(
-      store: cacheStore,
-      policy: CachePolicy.request,
-      hitCacheOnErrorExcept: [401, 403],
-      maxStale: const Duration(days: 7),
-      priority: CachePriority.normal,
-    ),
-  ));
+  // Cache interceptor disabled (API mismatch with dio_cache_interceptor_hive_store 3.x)
+  // Re-enable when API is verified — see dio_cache_interceptor_hive_store docs.
+  // final cacheStore = HiveCacheStore.fromBox(HiveBoxes.cacheBox);
+  // dio.interceptors.add(DioCacheInterceptor(
+  //   options: CacheOptions(
+  //     store: cacheStore,
+  //     policy: CachePolicy.request,
+  //     hitCacheOnErrorExcept: [401, 403],
+  //     maxStale: const Duration(days: 7),
+  //     priority: CachePriority.normal,
+  //   ),
+  // ));
 
   // Auth + guest token injection + auto-refresh
   const secure = FlutterSecureStorage();
