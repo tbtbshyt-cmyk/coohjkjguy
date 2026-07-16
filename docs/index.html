@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>أبو بشار — متجر الأناقة</title>
+  <meta name="description" content="أبو بشار — متجر الأناقة في اليمن. ملابس وأحذية فاخرة.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0A0A0A;
+      --ink-soft: #141414;
+      --ink-card: #1A1A1A;
+      --gold: #D4AF37;
+      --gold-light: #E5C04B;
+      --gold-dark: #947418;
+      --muted: #A0AEC0;
+      --white: #ffffff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: 
+        radial-gradient(ellipse at top right, rgba(212,175,55,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom left, rgba(212,175,55,0.08) 0%, transparent 50%),
+        var(--ink);
+      position: relative;
+      padding: 2rem 1rem;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(212,175,55,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,175,55,0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    }
+    .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; text-align: center; }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 100px;
+      color: var(--gold);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+    .badge .pulse {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.7); }
+      50% { box-shadow: 0 0 0 12px rgba(212,175,55,0); }
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+    h1 .gradient {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      line-height: 1.6;
+    }
+    
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      background: var(--gold);
+      color: var(--ink);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 17px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 24px rgba(212,175,55,0.4);
+    }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(212,175,55,0.6); }
+    .cta.outline {
+      background: transparent;
+      color: var(--gold);
+      border: 2px solid var(--gold);
+      box-shadow: none;
+      margin-inline-start: 12px;
+    }
+    .cta.outline:hover { background: var(--gold); color: var(--ink); }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 6rem;
+    }
+    .feature {
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.15);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s;
+    }
+    .feature:hover {
+      border-color: rgba(212,175,55,0.4);
+      transform: translateY(-4px);
+    }
+    .feature .icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 1rem;
+    }
+    .feature h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .feature p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-top: 4rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, var(--ink-soft) 0%, var(--ink-card) 100%);
+      border-radius: 20px;
+      border: 1px solid rgba(212,175,55,0.2);
+    }
+    .stat { text-align: center; }
+    .stat .num {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+    
+    .links {
+      margin-top: 3rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--ink-soft);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 10px;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .link:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); }
+    
+    footer {
+      margin-top: 6rem;
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid rgba(212,175,55,0.1);
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+    
+    @media (max-width: 640px) {
+      .cta.outline { margin-inline-start: 0; margin-top: 12px; }
+      .links { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="container">
+      <div class="badge">
+        <span class="pulse"></span>
+        <span>متاح الآن في اليمن 🇾🇪</span>
+      </div>
+      
+      <h1>
+        متجر <span class="gradient">أبو بشار</span><br>
+        للأناقة الفاخرة
+      </h1>
+      
+      <p class="subtitle">
+        تجربة تسوق إلكترونية متكاملة، مصممة خصيصاً للسوق اليمني.
+        ملابس وأحذية فاخرة مع دفع آمن عند الاستلام وتوصيل لكل المحافظات.
+      </p>
+      
+      <div>
+        <a href="https://389cd10g78l1.space.minimax.io" class="cta">
+          <span>🛍️</span>
+          <span>ادخل المتجر</span>
+        </a>
+        <a href="https://github.com/tbtbshyt-cmyk/coohjkjguy" class="cta outline">
+          <span>📂</span>
+          <span>الكود على GitHub</span>
+        </a>
+      </div>
+      
+      <div class="features">
+        <div class="feature">
+          <div class="icon">📱</div>
+          <h3>تطبيق Flutter أصلي</h3>
+          <p>يعمل على Android وiOS بسلاسة، مُحسَّن لشبكات اليمن 3G/4G.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🌐</div>
+          <h3>موقع Next.js 14</h3>
+          <p>SSR + Static Export مع RTL كامل وتجربة مستخدم فاخرة.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">⚙️</div>
+          <h3>Backend NestJS</h3>
+          <p>API قوي بـ Prisma + PostgreSQL، مصادقة JWT، RBAC، Audit Log.</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🔐</div>
+          <h3>لوحة إدارة</h3>
+          <p>إدارة المنتجات، الطلبات، الكاشير، التقارير، الموظفين.</p>
+        </div>
+      </div>
+      
+      <div class="stats">
+        <div class="stat">
+          <div class="num">35+</div>
+          <div class="label">ميزة متقدمة</div>
+        </div>
+        <div class="stat">
+          <div class="num">3</div>
+          <div class="label">منصات (Web/iOS/Android)</div>
+        </div>
+        <div class="stat">
+          <div class="num">4</div>
+          <div class="label">مجلدات monorepo</div>
+        </div>
+        <div class="stat">
+          <div class="num">290+</div>
+          <div class="label">ملف في الكود</div>
+        </div>
+      </div>
+      
+      <div class="links">
+        <a href="https://389cd10g78l1.space.minimax.io" class="link">🛍️ المتجر الكامل</a>
+        <a href="https://trp4ok5n6n18.space.minimax.io" class="link">🌐 النسخة Next.js</a>
+        <a href="https://github.com/tbtbshyt-cmyk/coohjkjguy" class="link">💻 الكود المصدري</a>
+        <a href="https://github.com/tbtbshyt-cmyk/coohjkjguy/releases" class="link">📱 تحميل APK</a>
+      </div>
+      
+      <footer>
+        <p>
+          <strong>أبو بشار © 2026</strong> — صُنع بـ ❤️ في اليمن
+        </p>
+        <p style="margin-top: 0.5rem;">
+          <a href="https://github.com/tbtbshyt-cmyk/coohjkjguy/blob/main/docs/API.md">📖 توثيق API</a> · 
+          <a href="https://github.com/tbtbshyt-cmyk/coohjkjguy/actions">🔄 حالة CI</a>
+        </p>
+      </footer>
+    </div>
+  </section>
+</body>
+</html>
