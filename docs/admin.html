@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة إدارة أبو بشار — رفع المنتجات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0A0A0A; --ink-soft: #141414; --ink-card: #1A1A1A;
+      --gold: #D4AF37; --gold-light: #E5C04B; --gold-dark: #947418;
+      --muted: #A0AEC0; --white: #ffffff; --success: #51CF66; --danger: #FF6B6B;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', system-ui, sans-serif;
+      background: var(--ink); color: var(--white);
+      min-height: 100vh;
+    }
+    .header {
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(212,175,55,0.2);
+      padding: 1rem 0;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--white);
+    }
+    .logo-mark {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; color: var(--ink); font-size: 18px;
+    }
+    .logo-text { font-weight: 900; font-size: 1.25rem; }
+    .logo-text .gold { color: var(--gold); }
+    
+    .main {
+      max-width: 1400px; margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .stat-card .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 0.5rem;
+    }
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .drop-zone {
+      background: var(--ink-card);
+      border: 2px dashed rgba(212,175,55,0.3);
+      border-radius: 16px;
+      padding: 4rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 2rem;
+    }
+    .drop-zone:hover, .drop-zone.dragging {
+      border-color: var(--gold);
+      background: rgba(212,175,55,0.05);
+    }
+    .drop-zone .icon { font-size: 4rem; margin-bottom: 1rem; }
+    .drop-zone h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .drop-zone p { color: var(--muted); }
+    .drop-zone .small { font-size: 12px; margin-top: 1rem; }
+    .drop-zone input { display: none; }
+    
+    .controls {
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: var(--gold);
+      color: var(--ink);
+      border: 0;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.secondary { background: var(--ink-soft); color: var(--white); border: 1px solid rgba(212,175,55,0.3); }
+    .btn.danger { background: var(--danger); color: var(--white); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .product-card {
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .product-card:hover {
+      border-color: rgba(212,175,55,0.4);
+    }
+    .product-card img {
+      width: 100%; aspect-ratio: 1; object-fit: cover;
+    }
+    .product-card .info { padding: 0.75rem; }
+    .product-card .name { font-size: 13px; font-weight: 700; line-height: 1.3; }
+    .product-card .meta { font-size: 11px; color: var(--muted); margin-top: 0.25rem; }
+    .product-card .delete {
+      position: absolute; top: 6px; right: 6px;
+      width: 28px; height: 28px;
+      background: var(--danger);
+      border: 0;
+      border-radius: 50%;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+    }
+    
+    .toast {
+      position: fixed; bottom: 20px; right: 20px;
+      background: var(--ink-card);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 1000;
+      transform: translateX(500px);
+      transition: transform 0.3s;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-color: var(--success); }
+    .toast.error { border-color: var(--danger); }
+    
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999; padding: 2rem;
+    }
+    .modal-bg.show { display: flex; }
+    .modal-card {
+      background: var(--ink-card);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      max-width: 500px; width: 100%;
+      padding: 2rem;
+    }
+    .modal-card h2 { margin-bottom: 1rem; }
+    .modal-card .form-group { margin-bottom: 1rem; }
+    .modal-card label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 0.25rem; }
+    .modal-card input, .modal-card select, .modal-card textarea {
+      width: 100%; padding: 10px 14px;
+      background: var(--ink-soft);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+      outline: none; border-color: var(--gold);
+    }
+    .modal-card .actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+    
+    .progress {
+      background: var(--ink-soft);
+      border-radius: 10px;
+      height: 8px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+      height: 100%;
+      transition: width 0.3s;
+    }
+    
+    .storage-bar {
+      background: var(--ink-soft);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .storage-bar .label {
+      display: flex; justify-content: space-between;
+      color: var(--muted); font-size: 13px;
+      margin-bottom: 0.5rem;
+    }
+    .storage-bar .bar {
+      background: var(--ink);
+      border-radius: 8px;
+      height: 12px;
+      overflow: hidden;
+    }
+    .storage-bar .fill {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+      height: 100%;
+      transition: width 0.3s;
+    }
+    
+    .empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+    .empty .icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="./" class="logo">
+        <div class="logo-mark">أ</div>
+        <div class="logo-text">أبو <span class="gold">بشار</span> — إدارة</div>
+      </a>
+      <div style="display: flex; gap: 0.75rem;">
+        <a href="gallery.html" class="btn secondary">🛍️ المعرض</a>
+        <a href="./" class="btn secondary">🏠 الرئيسية</a>
+      </div>
+    </div>
+  </header>
+  
+  <main class="main">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">إجمالي المنتجات</div>
+        <div class="value" id="totalCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">المساحة المستخدمة</div>
+        <div class="value" id="usedSize">0 MB</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">الفئات</div>
+        <div class="value" id="catCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">السعة المتبقية</div>
+        <div class="value" id="remaining">∞</div>
+      </div>
+    </div>
+    
+    <!-- Storage bar -->
+    <div class="storage-bar">
+      <div class="label">
+        <span>المساحة المستخدمة من التخزين المحلي</span>
+        <span id="storagePercent">0%</span>
+      </div>
+      <div class="bar"><div class="fill" id="storageBar" style="width: 0%"></div></div>
+    </div>
+    
+    <!-- Drop zone -->
+    <label class="drop-zone" id="dropZone">
+      <div class="icon">📤</div>
+      <h2>اسحب الصور هنا أو اضغط للاختيار</h2>
+      <p>يدعم JPG, PNG, WebP — حد أقصى 10 MB لكل صورة</p>
+      <p class="small">يمكنك رفع آلاف الصور دفعة واحدة</p>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+    </label>
+    
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn" id="bulkUpload">+ رفع مجمع</button>
+      <button class="btn secondary" id="bulkGenerate">⚡ توليد 1000+ تلقائياً</button>
+      <button class="btn secondary" id="exportBtn">📦 تصدير قاعدة البيانات</button>
+      <button class="btn secondary" id="importBtn">📥 استيراد قاعدة بيانات</button>
+      <button class="btn danger" id="clearAll">🗑️ مسح الكل</button>
+      <input type="file" id="importFile" accept=".json" style="display: none;">
+    </div>
+    
+    <!-- Search -->
+    <input type="text" id="searchInput" placeholder="ابحث في المنتجات..." style="
+      width: 100%; padding: 12px 18px;
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 10px;
+      color: var(--white);
+      font-family: inherit; font-size: 14px;
+      margin-bottom: 1.5rem;
+    ">
+    
+    <!-- Products grid -->
+    <div class="products-grid" id="grid"></div>
+    
+    <div class="empty" id="emptyState" style="display: none;">
+      <div class="icon">📦</div>
+      <h3>لا توجد منتجات بعد</h3>
+      <p>ارفع صورك لتبدأ في بناء الكتالوج</p>
+    </div>
+  </main>
+  
+  <!-- Edit modal -->
+  <div class="modal-bg" id="editModal">
+    <div class="modal-card">
+      <h2>تعديل المنتج</h2>
+      <div class="form-group">
+        <label>الاسم</label>
+        <input type="text" id="editName">
+      </div>
+      <div class="form-group">
+        <label>الفئة</label>
+        <input type="text" id="editCat" list="catList">
+        <datalist id="catList">
+          <option value="ثوب"><option value="بدلة"><option value="حذاء">
+          <option value="إكسسوار"><option value="تراثي"><option value="قميص">
+          <option value="عطر"><option value="شتوي"><option value="رياضي">
+          <option value="صيفي"><option value="بنطلون">
+        </datalist>
+      </div>
+      <div class="form-group">
+        <label>الماركة</label>
+        <input type="text" id="editBrand" value="أبو بشار">
+      </div>
+      <div class="form-group">
+        <label>السعر (ر.ي)</label>
+        <input type="number" id="editPrice">
+      </div>
+      <div class="form-group">
+        <label>الوصف</label>
+        <textarea id="editDesc" rows="3"></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn" id="saveEdit">حفظ</button>
+        <button class="btn secondary" id="cancelEdit">إلغاء</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+  
+  <script>
+    // === DATABASE (IndexedDB) ===
+    const DB_NAME = 'AbuBisharDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'products';
+    let db = null;
+    
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            store.createIndex('cat', 'cat', { unique: false });
+            store.createIndex('name', 'name', { unique: false });
+            store.createIndex('createdAt', 'createdAt', { unique: false });
+          }
+        };
+        request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+        request.onerror = (e) => reject(e);
+      });
+    }
+    
+    function addProduct(p) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).put(p);
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e);
+      });
+    }
+    
+    function getAllProducts() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = (e) => reject(e);
+      });
+    }
+    
+    function deleteProduct(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).delete(id);
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e);
+      });
+    }
+    
+    function countProducts() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).count();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = (e) => reject(e);
+      });
+    }
+    
+    async function clearAll() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e);
+      });
+    }
+    
+    // === UI ===
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const grid = document.getElementById('grid');
+    const emptyState = document.getElementById('emptyState');
+    const searchInput = document.getElementById('searchInput');
+    const toast = document.getElementById('toast');
+    
+    let allProducts = [];
+    let currentEditing = null;
+    
+    function showToast(msg, type = 'success') {
+      toast.textContent = msg;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024*1024) return (bytes / 1024).toFixed(1) + ' KB';
+      if (bytes < 1024*1024*1024) return (bytes / 1024/1024).toFixed(1) + ' MB';
+      return (bytes / 1024/1024/1024).toFixed(2) + ' GB';
+    }
+    
+    async function refreshStats() {
+      allProducts = await getAllProducts();
+      const cats = new Set(allProducts.map(p => p.cat).filter(Boolean));
+      const totalSize = allProducts.reduce((sum, p) => sum + (p.size || 0), 0);
+      
+      document.getElementById('totalCount').textContent = allProducts.length.toLocaleString('ar-EG');
+      document.getElementById('usedSize').textContent = formatBytes(totalSize);
+      document.getElementById('catCount').textContent = cats.size;
+      
+      // Storage estimate
+      if (navigator.storage && navigator.storage.estimate) {
+        const est = await navigator.storage.estimate();
+        const used = est.usage || 0;
+        const quota = est.quota || 0;
+        const pct = quota > 0 ? (used / quota * 100) : 0;
+        document.getElementById('storagePercent').textContent = pct.toFixed(1) + '%';
+        document.getElementById('storageBar').style.width = pct + '%';
+        const remainingBytes = quota - used;
+        const remainingMb = remainingBytes / 1024 / 1024;
+        if (remainingMb > 1024) {
+          document.getElementById('remaining').textContent = (remainingMb / 1024).toFixed(1) + ' GB';
+        } else {
+          document.getElementById('remaining').textContent = Math.round(remainingMb) + ' MB';
+        }
+      }
+      
+      render();
+    }
+    
+    function render() {
+      const q = searchInput.value.toLowerCase();
+      const filtered = allProducts.filter(p => 
+        !q || 
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.cat || '').toLowerCase().includes(q) ||
+        (p.brand || '').toLowerCase().includes(q) ||
+        (p.sku || '').toLowerCase().includes(q)
+      );
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      // Show first 200 only
+      const display = filtered.slice(0, 200);
+      grid.innerHTML = display.map(p => `
+        <div class="product-card" data-id="${p.id}">
+          <button class="delete" onclick="deleteP('${p.id}')">×</button>
+          <img src="${p.dataUrl}" alt="${p.name}" loading="lazy">
+          <div class="info">
+            <div class="name">${p.name || 'بدون اسم'}</div>
+            <div class="meta">${p.cat || 'بدون فئة'} • ${formatBytes(p.size || 0)}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      // Click to edit
+      grid.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.classList.contains('delete')) return;
+          const id = card.dataset.id;
+          editProduct(id);
+        });
+      });
+      
+      if (filtered.length > 200) {
+        grid.insertAdjacentHTML('beforeend', `
+          <div class="empty" style="grid-column: 1/-1;">
+            <p>عرض 200 من ${filtered.length.toLocaleString('ar-EG')} منتج. استخدم البحث للعثور على منتج محدد.</p>
+          </div>
+        `);
+      }
+    }
+    
+    async function deleteP(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+      await deleteProduct(id);
+      showToast('تم الحذف', 'success');
+      refreshStats();
+    }
+    
+    function editProduct(id) {
+      const p = allProducts.find(x => x.id === id);
+      if (!p) return;
+      currentEditing = p;
+      document.getElementById('editName').value = p.name || '';
+      document.getElementById('editCat').value = p.cat || '';
+      document.getElementById('editBrand').value = p.brand || 'أبو بشار';
+      document.getElementById('editPrice').value = p.price || 0;
+      document.getElementById('editDesc').value = p.desc || '';
+      document.getElementById('editModal').classList.add('show');
+    }
+    
+    document.getElementById('saveEdit').onclick = async () => {
+      if (!currentEditing) return;
+      currentEditing.name = document.getElementById('editName').value;
+      currentEditing.cat = document.getElementById('editCat').value;
+      currentEditing.brand = document.getElementById('editBrand').value;
+      currentEditing.price = parseFloat(document.getElementById('editPrice').value) || 0;
+      currentEditing.desc = document.getElementById('editDesc').value;
+      await addProduct(currentEditing);
+      document.getElementById('editModal').classList.remove('show');
+      showToast('تم الحفظ', 'success');
+      refreshStats();
+    };
+    
+    document.getElementById('cancelEdit').onclick = () => {
+      document.getElementById('editModal').classList.remove('show');
+    };
+    
+    // === FILE UPLOAD ===
+    async function handleFiles(files) {
+      if (files.length === 0) return;
+      const total = files.length;
+      let uploaded = 0;
+      let failed = 0;
+      
+      // Show progress
+      showToast(`جاري رفع ${total} صورة...`, 'success');
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith('image/')) {
+          failed++;
+          continue;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          failed++;
+          continue;
+        }
+        
+        try {
+          const dataUrl = await readFileAsDataURL(file);
+          const product = {
+            id: 'p_' + Date.now() + '_' + i + '_' + Math.random().toString(36).substr(2, 5),
+            name: file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+            cat: 'غير مصنف',
+            brand: 'أبو بشار',
+            price: 0,
+            desc: '',
+            size: file.size,
+            type: file.type,
+            dataUrl: dataUrl,
+            createdAt: Date.now(),
+            sku: 'ABV-' + Date.now().toString().slice(-6) + '-' + i,
+          };
+          await addProduct(product);
+          uploaded++;
+          
+          if (uploaded % 10 === 0) {
+            showToast(`تم رفع ${uploaded}/${total}...`, 'success');
+            refreshStats();
+          }
+        } catch (e) {
+          console.error('Upload failed:', e);
+          failed++;
+        }
+      }
+      
+      refreshStats();
+      showToast(`تم رفع ${uploaded} صورة${failed > 0 ? ` (فشل ${failed})` : ''}`, failed > 0 ? 'error' : 'success');
+    }
+    
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    // === EVENT LISTENERS ===
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragging');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragging'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragging');
+      handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+      fileInput.value = '';
+    });
+    
+    searchInput.addEventListener('input', render);
+    
+    // Bulk upload with folder
+    document.getElementById('bulkUpload').onclick = () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.multiple = true;
+      input.webkitdirectory = true;
+      input.onchange = (e) => handleFiles(e.target.files);
+      input.click();
+    };
+    
+    // Bulk generate (auto-create from existing)
+    document.getElementById('bulkGenerate').onclick = async () => {
+      if (allProducts.length === 0) {
+        showToast('ارفع بعض الصور أولاً', 'error');
+        return;
+      }
+      
+      const variants = parseInt(prompt('كم عدد المنتجات المراد توليدها؟ (مثال: 1000, 5000, 10000)', '1000'));
+      if (!variants || variants < 1) return;
+      
+      showToast(`جاري توليد ${variants} منتج...`, 'success');
+      
+      const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+      const colors = ['أسود', 'أبيض', 'كحلي', 'رمادي', 'بني', 'بيج', 'ذهبي', 'فضي'];
+      const brands = ['أبو بشار', 'LUXURY', 'PREMIUM', 'SIGNATURE', 'EXCLUSIVE'];
+      
+      const products = [];
+      for (let i = 0; i < variants; i++) {
+        const base = allProducts[Math.floor(Math.random() * allProducts.length)];
+        const variant = {
+          ...base,
+          id: 'gen_' + Date.now() + '_' + i,
+          name: base.name + ' - ' + sizes[Math.floor(Math.random() * sizes.length)] + ' / ' + colors[Math.floor(Math.random() * colors.length)],
+          cat: base.cat || 'غير مصنف',
+          price: (base.price || 5000) * (0.8 + Math.random() * 0.4),
+          sku: 'GEN-' + Date.now().toString().slice(-6) + '-' + i,
+          createdAt: Date.now(),
+        };
+        products.push(variant);
+      }
+      
+      // Add in batches
+      for (const p of products) {
+        await addProduct(p);
+      }
+      
+      refreshStats();
+      showToast(`تم توليد ${variants} منتج!`, 'success');
+    };
+    
+    // Export
+    document.getElementById('exportBtn').onclick = async () => {
+      const products = await getAllProducts();
+      if (products.length === 0) {
+        showToast('لا توجد منتجات للتصدير', 'error');
+        return;
+      }
+      
+      const data = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        count: products.length,
+        products: products,
+      };
+      
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `abu-bishar-db-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`تم تصدير ${products.length} منتج`, 'success');
+    };
+    
+    // Import
+    document.getElementById('importBtn').onclick = () => {
+      document.getElementById('importFile').click();
+    };
+    document.getElementById('importFile').onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if (!data.products || !Array.isArray(data.products)) {
+          showToast('ملف غير صالح', 'error');
+          return;
+        }
+        let added = 0;
+        for (const p of data.products) {
+          await addProduct(p);
+          added++;
+        }
+        refreshStats();
+        showToast(`تم استيراد ${added} منتج`, 'success');
+      } catch (err) {
+        showToast('فشل الاستيراد: ' + err.message, 'error');
+      }
+    };
+    
+    // Clear all
+    document.getElementById('clearAll').onclick = async () => {
+      const count = await countProducts();
+      if (count === 0) {
+        showToast('لا توجد منتجات للمسح', 'error');
+        return;
+      }
+      if (!confirm(`هل أنت متأكد من مسح كل الـ ${count} منتج؟\n\n⚠️ لا يمكن التراجع!`)) return;
+      await clearAll();
+      refreshStats();
+      showToast('تم مسح كل المنتجات', 'success');
+    };
+    
+    // === INIT ===
+    (async () => {
+      await openDB();
+      await refreshStats();
+    })();
+  </script>
+</body>
+</html>

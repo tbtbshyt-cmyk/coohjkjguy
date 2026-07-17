@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>معرض أبو بشار — أكثر من 10,000 منتج</title>
+  <title>معرض أبو بشار — كل المنتجات</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --ink: #0A0A0A; --ink-soft: #141414; --ink-card: #1A1A1A;
@@ -15,7 +15,7 @@
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+      font-family: 'Cairo', system-ui, sans-serif;
       background: var(--ink); color: var(--white);
       min-height: 100vh;
     }
@@ -59,7 +59,6 @@
       font-family: inherit;
       font-size: 15px;
       outline: none;
-      transition: border-color 0.3s;
     }
     .search input:focus { border-color: var(--gold); }
     .search .icon {
@@ -69,7 +68,7 @@
     }
     
     .stats {
-      display: flex; gap: 1.5rem; align-items: center;
+      display: flex; gap: 1rem; align-items: center;
     }
     .stat-pill {
       background: var(--ink-card);
@@ -96,6 +95,7 @@
       font-size: 14px;
       font-weight: 600;
       transition: all 0.2s;
+      font-family: inherit;
     }
     .filter:hover { border-color: var(--gold); }
     .filter.active {
@@ -130,7 +130,6 @@
     .card:hover {
       transform: translateY(-4px);
       border-color: rgba(212,175,55,0.5);
-      box-shadow: 0 12px 32px rgba(212,175,55,0.15);
     }
     .card-img {
       width: 100%; aspect-ratio: 1;
@@ -143,7 +142,6 @@
       color: var(--gold);
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
     .card-name {
       font-size: 15px;
@@ -158,20 +156,6 @@
       font-size: 17px;
       font-weight: 900;
       color: var(--gold);
-    }
-    .card-price .old {
-      font-size: 12px; color: var(--muted);
-      text-decoration: line-through; font-weight: 400;
-    }
-    .card-badge {
-      position: absolute;
-      top: 8px; right: 8px;
-      background: var(--gold);
-      color: var(--ink);
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 900;
     }
     
     .loading {
@@ -189,6 +173,24 @@
       margin: 0 auto 1rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+    .empty .icon { font-size: 4rem; opacity: 0.5; margin-bottom: 1rem; }
+    .empty a {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 12px 24px;
+      background: var(--gold);
+      color: var(--ink);
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+    }
     
     .footer {
       max-width: 1400px; margin: 0 auto;
@@ -257,6 +259,31 @@
       font-weight: 900;
       cursor: pointer;
       margin-top: 1rem;
+      font-family: inherit;
+    }
+    
+    .cta-banner {
+      background: linear-gradient(135deg, var(--ink-soft) 0%, var(--ink-card) 100%);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .cta-banner .text { flex: 1; min-width: 200px; }
+    .cta-banner h3 { color: var(--gold); font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .cta-banner p { color: var(--muted); font-size: 14px; }
+    .cta-banner .btn {
+      padding: 12px 24px;
+      background: var(--gold);
+      color: var(--ink);
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -274,23 +301,31 @@
       <div class="stats">
         <div class="stat-pill">
           <span class="num" id="visibleCount">0</span>
-          <span>منتج ظاهر</span>
+          <span>منتج</span>
         </div>
-        <div class="stat-pill">
-          <span class="num" id="totalCount">0</span>
-          <span>إجمالي</span>
-        </div>
+        <a href="admin.html" class="stat-pill" style="text-decoration: none; cursor: pointer;">
+          <span>⚙️</span>
+          <span>إدارة</span>
+        </a>
       </div>
     </div>
   </header>
   
-  <div class="filters" id="filters"></div>
-  
   <main class="main">
+    <div class="cta-banner" id="ctaBanner">
+      <div class="text">
+        <h3>📦 هل عندك صور منتجات؟</h3>
+        <p>ارفع آلاف الصور في قاعدة البيانات المحلية وبيظهروا هنا تلقائياً</p>
+      </div>
+      <a href="admin.html" class="btn">ارفع صورك</a>
+    </div>
+    
+    <div class="filters" id="filters"></div>
+    
     <div class="grid" id="grid">
       <div class="loading">
         <div class="spinner"></div>
-        <div>جاري تحميل المنتجات...</div>
+        <div>جاري تحميل المنتجات من قاعدة البيانات...</div>
       </div>
     </div>
   </main>
@@ -305,8 +340,8 @@
         <div class="price" id="modalPrice"></div>
         <p class="desc" id="modalDesc"></p>
         <div class="specs">
-          <div><span>المقاس</span><span id="modalSize"></span></div>
-          <div><span>اللون</span><span id="modalColor"></span></div>
+          <div><span>المقاس</span><span id="modalSize">-</span></div>
+          <div><span>اللون</span><span id="modalColor">-</span></div>
           <div><span>الماركة</span><span id="modalBrand"></span></div>
           <div><span>SKU</span><span id="modalSku"></span></div>
         </div>
@@ -319,162 +354,140 @@
     <p>أبو بشار © 2026 — صُنع بـ ❤️ في اليمن</p>
     <p style="margin-top: 0.5rem;">
       <a href="./">الصفحة الرئيسية</a> · 
+      <a href="admin.html">إدارة المنتجات</a> · 
       <a href="https://github.com/tbtbshyt-cmyk/coohjkjguy">الكود على GitHub</a>
     </p>
   </footer>
 
   <script>
-    // === CATALOG DATA ===
-    // 30 unique base products, each with multiple variants
+    // === DATABASE (IndexedDB) ===
+    const DB_NAME = 'AbuBisharDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'products';
+    let db = null;
+    
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            store.createIndex('cat', 'cat', { unique: false });
+            store.createIndex('name', 'name', { unique: false });
+          }
+        };
+        request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+        request.onerror = (e) => reject(e);
+      });
+    }
+    
+    function getAllProducts() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = (e) => reject(e);
+      });
+    }
+    
+    function addProduct(p) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).put(p);
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e);
+      });
+    }
+    
+    // === 30 BASE PRODUCTS (fallback) ===
     const BASE_PRODUCTS = [
-      { id: 'abaya-black-classic', name: 'عباية سوداء كلاسيكية', cat: 'ثوب', img: 'products/abaya-black-classic.jpg', basePrice: 8500, color: 'أسود' },
-      { id: 'thobe-white-premium', name: 'ثوب أبيض فاخر', cat: 'ثوب', img: 'products/thobe-white-premium.jpg', basePrice: 7200, color: 'أبيض' },
-      { id: 'suit-navy-formal', name: 'بدلة كحلية رسمية', cat: 'بدلة', img: 'products/suit-navy-formal.jpg', basePrice: 18500, color: 'كحلي' },
-      { id: 'shoes-leather-black', name: 'حذاء جلد أسود رسمي', cat: 'حذاء', img: 'products/shoes-leather-black.jpg', basePrice: 9500, color: 'أسود' },
-      { id: 'shoes-loafers-brown', name: 'لوفرز جلد بني', cat: 'حذاء', img: 'products/shoes-loafers-brown.jpg', basePrice: 7800, color: 'بني' },
-      { id: 'shoes-sneakers-white', name: 'سنيكرز أبيض عصري', cat: 'حذاء', img: 'products/shoes-sneakers-white.jpg', basePrice: 6500, color: 'أبيض' },
-      { id: 'bisht-brown-gold', name: 'بشت بني مطرز بالذهب', cat: 'بشت', img: 'products/bisht-brown-gold.jpg', basePrice: 25000, color: 'بني' },
-      { id: 'shemagh-red-white', name: 'شماغ أحمر وأبيض', cat: 'شماغ', img: 'products/shemagh-red-white.jpg', basePrice: 3500, color: 'أحمر' },
-      { id: 'belt-leather-gold', name: 'حزام جلد بإبزيم ذهبي', cat: 'إكسسوار', img: 'products/belt-leather-gold.jpg', basePrice: 4200, color: 'أسود' },
-      { id: 'watch-luxury-gold', name: 'ساعة فاخرة مطلية بالذهب', cat: 'إكسسوار', img: 'products/watch-luxury-gold.jpg', basePrice: 35000, color: 'ذهبي' },
-      { id: 'shirt-casual-blue', name: 'قميص كاجوال أزرق', cat: 'قميص', img: 'products/shirt-casual-blue.jpg', basePrice: 4800, color: 'أزرق' },
-      { id: 'polo-shirt-premium', name: 'بولو فاخر', cat: 'قميص', img: 'products/polo-shirt-premium.jpg', basePrice: 5500, color: 'متعدد' },
-      { id: 'jeans-denim-dark', name: 'جينز داكن', cat: 'بنطلون', img: 'products/jeans-denim-dark.jpg', basePrice: 6800, color: 'كحلي' },
-      { id: 'sunglasses-luxury', name: 'نظارة شمسية فاخرة', cat: 'إكسسوار', img: 'products/sunglasses-luxury.jpg', basePrice: 8200, color: 'أسود' },
-      { id: 'perfume-men-luxury', name: 'عطر رجالي فاخر', cat: 'عطر', img: 'products/perfume-men-luxury.jpg', basePrice: 12500, color: '-' },
-      { id: 'wallet-leather-black', name: 'محفظة جلد أسود', cat: 'إكسسوار', img: 'products/wallet-leather-black.jpg', basePrice: 3800, color: 'أسود' },
-      { id: 'jacket-winter-dark', name: 'جاكيت شتوي داكن', cat: 'شتوي', img: 'products/jacket-winter-dark.jpg', basePrice: 14800, color: 'أسود' },
-      { id: 'tshirt-black-premium', name: 'تيشيرت أسود فاخر', cat: 'قميص', img: 'products/tshirt-black-premium.jpg', basePrice: 2900, color: 'أسود' },
-      { id: 'scarf-winter-gray', name: 'وشاح شتوي رمادي', cat: 'شتوي', img: 'products/scarf-winter-gray.jpg', basePrice: 3500, color: 'رمادي' },
-      { id: 'cap-baseball-black', name: 'كاب بيسبول أسود', cat: 'إكسسوار', img: 'products/cap-baseball-black.jpg', basePrice: 2400, color: 'أسود' },
-      { id: 'boots-leather-brown', name: 'بوت جلد بني', cat: 'حذاء', img: 'products/boots-leather-brown.jpg', basePrice: 11500, color: 'بني' },
-      { id: 'sandals-leather-summer', name: 'صندل جلد صيفي', cat: 'حذاء', img: 'products/sandals-leather-summer.jpg', basePrice: 4500, color: 'بني' },
-      { id: 'jambiya-traditional-gold', name: 'جنبية يمنية تقليدية', cat: 'تراثي', img: 'products/jambiya-traditional-gold.jpg', basePrice: 22000, color: 'ذهبي' },
-      { id: 'prayer-rug-premium', name: 'سجادة صلاة فاخرة', cat: 'تراثي', img: 'products/prayer-rug-premium.jpg', basePrice: 5800, color: 'متعدد' },
-      { id: 'misbaha-prayer-beads', name: 'مسبحة بخيوط ذهبية', cat: 'تراثي', img: 'products/misbaha-prayer-beads.jpg', basePrice: 7500, color: 'ذهبي' },
-      { id: 'oud-perfume-arabic', name: 'عطر عود عربي', cat: 'عطر', img: 'products/oud-perfume-arabic.jpg', basePrice: 18500, color: '-' },
-      { id: 'sweater-cashmere-premium', name: 'كنزة كشمير فاخرة', cat: 'شتوي', img: 'products/sweater-cashmere-premium.jpg', basePrice: 13800, color: 'رمادي' },
-      { id: 'tracksuit-sport-premium', name: 'بدلة رياضية فاخرة', cat: 'رياضي', img: 'products/tracksuit-sport-premium.jpg', basePrice: 9500, color: 'أسود' },
-      { id: 'underwear-premium', name: 'ملابس داخلية فاخرة', cat: 'ملابس', img: 'products/underwear-premium.jpg', basePrice: 1800, color: 'متعدد' },
-      { id: 'socks-cotton-premium', name: 'جوارب قطن فاخرة', cat: 'ملابس', img: 'products/socks-cotton-premium.jpg', basePrice: 1200, color: 'متعدد' },
+      { id: 'abaya-black-classic', name: 'عباية سوداء كلاسيكية', cat: 'ثوب', img: 'images/products/abaya-black-classic.jpg', basePrice: 8500, color: 'أسود' },
+      { id: 'thobe-white-premium', name: 'ثوب أبيض فاخر', cat: 'ثوب', img: 'images/products/thobe-white-premium.jpg', basePrice: 7200, color: 'أبيض' },
+      { id: 'suit-navy-formal', name: 'بدلة كحلية رسمية', cat: 'بدلة', img: 'images/products/suit-navy-formal.jpg', basePrice: 18500, color: 'كحلي' },
+      { id: 'shoes-leather-black', name: 'حذاء جلد أسود رسمي', cat: 'حذاء', img: 'images/products/shoes-leather-black.jpg', basePrice: 9500, color: 'أسود' },
+      { id: 'shoes-loafers-brown', name: 'لوفرز جلد بني', cat: 'حذاء', img: 'images/products/shoes-loafers-brown.jpg', basePrice: 7800, color: 'بني' },
+      { id: 'shoes-sneakers-white', name: 'سنيكرز أبيض عصري', cat: 'حذاء', img: 'images/products/shoes-sneakers-white.jpg', basePrice: 6500, color: 'أبيض' },
+      { id: 'bisht-brown-gold', name: 'بشت بني مطرز بالذهب', cat: 'بشت', img: 'images/products/bisht-brown-gold.jpg', basePrice: 25000, color: 'بني' },
+      { id: 'shemagh-red-white', name: 'شماغ أحمر وأبيض', cat: 'شماغ', img: 'images/products/shemagh-red-white.jpg', basePrice: 3500, color: 'أحمر' },
+      { id: 'belt-leather-gold', name: 'حزام جلد بإبزيم ذهبي', cat: 'إكسسوار', img: 'images/products/belt-leather-gold.jpg', basePrice: 4200, color: 'أسود' },
+      { id: 'watch-luxury-gold', name: 'ساعة فاخرة مطلية بالذهب', cat: 'إكسسوار', img: 'images/products/watch-luxury-gold.jpg', basePrice: 35000, color: 'ذهبي' },
+      { id: 'shirt-casual-blue', name: 'قميص كاجوال أزرق', cat: 'قميص', img: 'images/products/shirt-casual-blue.jpg', basePrice: 4800, color: 'أزرق' },
+      { id: 'polo-shirt-premium', name: 'بولو فاخر', cat: 'قميص', img: 'images/products/polo-shirt-premium.jpg', basePrice: 5500, color: 'متعدد' },
+      { id: 'jeans-denim-dark', name: 'جينز داكن', cat: 'بنطلون', img: 'images/products/jeans-denim-dark.jpg', basePrice: 6800, color: 'كحلي' },
+      { id: 'sunglasses-luxury', name: 'نظارة شمسية فاخرة', cat: 'إكسسوار', img: 'images/products/sunglasses-luxury.jpg', basePrice: 8200, color: 'أسود' },
+      { id: 'perfume-men-luxury', name: 'عطر رجالي فاخر', cat: 'عطر', img: 'images/products/perfume-men-luxury.jpg', basePrice: 12500, color: '-' },
+      { id: 'wallet-leather-black', name: 'محفظة جلد أسود', cat: 'إكسسوار', img: 'images/products/wallet-leather-black.jpg', basePrice: 3800, color: 'أسود' },
+      { id: 'jacket-winter-dark', name: 'جاكيت شتوي داكن', cat: 'شتوي', img: 'images/products/jacket-winter-dark.jpg', basePrice: 14800, color: 'أسود' },
+      { id: 'tshirt-black-premium', name: 'تيشيرت أسود فاخر', cat: 'قميص', img: 'images/products/tshirt-black-premium.jpg', basePrice: 2900, color: 'أسود' },
+      { id: 'scarf-winter-gray', name: 'وشاح شتوي رمادي', cat: 'شتوي', img: 'images/products/scarf-winter-gray.jpg', basePrice: 3500, color: 'رمادي' },
+      { id: 'cap-baseball-black', name: 'كاب بيسبول أسود', cat: 'إكسسوار', img: 'images/products/cap-baseball-black.jpg', basePrice: 2400, color: 'أسود' },
+      { id: 'boots-leather-brown', name: 'بوت جلد بني', cat: 'حذاء', img: 'images/products/boots-leather-brown.jpg', basePrice: 11500, color: 'بني' },
+      { id: 'sandals-leather-summer', name: 'صندل جلد صيفي', cat: 'حذاء', img: 'images/products/sandals-leather-summer.jpg', basePrice: 4500, color: 'بني' },
+      { id: 'jambiya-traditional-gold', name: 'جنبية يمنية تقليدية', cat: 'تراثي', img: 'images/products/jambiya-traditional-gold.jpg', basePrice: 22000, color: 'ذهبي' },
+      { id: 'prayer-rug-premium', name: 'سجادة صلاة فاخرة', cat: 'تراثي', img: 'images/products/prayer-rug-premium.jpg', basePrice: 5800, color: 'متعدد' },
+      { id: 'misbaha-prayer-beads', name: 'مسبحة بخيوط ذهبية', cat: 'تراثي', img: 'images/products/misbaha-prayer-beads.jpg', basePrice: 7500, color: 'ذهبي' },
+      { id: 'oud-perfume-arabic', name: 'عطر عود عربي', cat: 'عطر', img: 'images/products/oud-perfume-arabic.jpg', basePrice: 18500, color: '-' },
+      { id: 'sweater-cashmere-premium', name: 'كنزة كشمير فاخرة', cat: 'شتوي', img: 'images/products/sweater-cashmere-premium.jpg', basePrice: 13800, color: 'رمادي' },
+      { id: 'tracksuit-sport-premium', name: 'بدلة رياضية فاخرة', cat: 'رياضي', img: 'images/products/tracksuit-sport-premium.jpg', basePrice: 9500, color: 'أسود' },
+      { id: 'underwear-premium', name: 'ملابس داخلية فاخرة', cat: 'ملابس', img: 'images/products/underwear-premium.jpg', basePrice: 1800, color: 'متعدد' },
+      { id: 'socks-cotton-premium', name: 'جوارب قطن فاخرة', cat: 'ملابس', img: 'images/products/socks-cotton-premium.jpg', basePrice: 1200, color: 'متعدد' },
     ];
     
-    const SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
-    const COLORS = ['أسود', 'أبيض', 'كحلي', 'رمادي', 'بني', 'بيج', 'ذهبي', 'فضي', 'أحمر', 'أزرق', 'أخضر'];
-    const BRANDS = ['أبو بشار', 'LUXURY', 'PREMIUM', 'CLASSIC', 'ROYAL', 'ELITE', 'SIGNATURE', 'EXCLUSIVE', 'HERITAGE', 'MODERN'];
-    const DESCRIPTIONS = [
-      'قطعة فاخرة مصنوعة من أجود الخامات، تصميم عصري يناسب المناسبات المختلفة.',
-      'منتج مميز بجودة عالية وتفاصيل دقيقة، مصمم خصيصاً للرجل العصري الأنيق.',
-      'تصميم كلاسيكي بلمسة عصرية، خامة فاخرة تدوم طويلاً وتمنحك إطلالة مميزة.',
-      'اختيار مثالي لمن يبحث عن التميز والأناقة، مصنوع بعناية فائقة.',
-      'قطعة استثنائية تجمع بين الفخامة والراحة، مثالية لكل مناسبة.',
-    ];
-    
-    // Generate 10,000+ products
-    function generateCatalog() {
+    // === CATALOG GENERATION ===
+    function generateCatalogFromBase() {
       const products = [];
-      let id = 1;
+      const SIZES = ['S', 'M', 'L', 'XL', 'XXL', '38', '39', '40', '41', '42', '43', '44', '45'];
+      const COLORS = ['أسود', 'أبيض', 'كحلي', 'رمادي', 'بني', 'بيج', 'ذهبي'];
+      const BRANDS = ['أبو بشار', 'LUXURY', 'PREMIUM', 'CLASSIC', 'ROYAL', 'ELITE'];
       
-      // For each base product, generate ~334 variants
+      let id = 1;
       BASE_PRODUCTS.forEach(base => {
-        const variantsPerProduct = Math.ceil(10000 / BASE_PRODUCTS.length);
-        for (let i = 0; i < variantsPerProduct; i++) {
-          const size = SIZES[Math.floor(Math.random() * SIZES.length)];
-          const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-          const brand = BRANDS[Math.floor(Math.random() * BRANDS.length)];
-          const desc = DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)];
-          const priceVariation = 0.7 + Math.random() * 0.6; // 70% - 130% of base
-          const oldPriceVariation = 1.2 + Math.random() * 0.5;
-          
-          const price = Math.round(base.basePrice * priceVariation);
-          const oldPrice = Math.round(price * oldPriceVariation);
-          const onSale = Math.random() > 0.5;
-          const inStock = Math.random() > 0.1;
-          
+        const variants = Math.ceil(10000 / BASE_PRODUCTS.length);
+        for (let i = 0; i < variants; i++) {
+          const priceVar = 0.7 + Math.random() * 0.6;
           products.push({
-            id: `ABV-${String(id).padStart(6, '0')}`,
+            id: 'ABV-' + String(id).padStart(6, '0'),
             name: base.name,
             cat: base.cat,
             img: base.img,
-            size: size,
-            color: color,
-            brand: brand,
-            desc: desc,
-            price: price,
-            oldPrice: onSale ? oldPrice : null,
-            inStock: inStock,
-            baseId: base.id,
+            size: SIZES[Math.floor(Math.random() * SIZES.length)],
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            brand: BRANDS[Math.floor(Math.random() * BRANDS.length)],
+            desc: 'قطعة فاخرة مصنوعة من أجود الخامات.',
+            price: Math.round(base.basePrice * priceVar),
+            isGenerated: true,
           });
           id++;
         }
       });
-      
       return products;
     }
     
-    const ALL_PRODUCTS = generateCatalog();
-    const TOTAL = ALL_PRODUCTS.length;
-    document.getElementById('totalCount').textContent = TOTAL.toLocaleString('ar-EG');
-    
-    // Render filters
-    const categories = ['الكل', ...new Set(BASE_PRODUCTS.map(p => p.cat))];
+    // === UI ===
+    const grid = document.getElementById('grid');
     const filtersEl = document.getElementById('filters');
-    categories.forEach((cat, idx) => {
-      const btn = document.createElement('button');
-      btn.className = 'filter' + (idx === 0 ? ' active' : '');
-      btn.textContent = cat;
-      btn.dataset.cat = cat;
-      btn.onclick = () => {
-        document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = cat;
-        renderPage();
-      };
-      filtersEl.appendChild(btn);
-    });
+    const searchInput = document.getElementById('searchInput');
+    const ctaBanner = document.getElementById('ctaBanner');
     
+    let ALL_PRODUCTS = [];
     let currentFilter = 'الكل';
     let currentSearch = '';
-    let visibleCount = 0;
+    let renderedCount = 0;
     const PAGE_SIZE = 50;
-    
-    function getFiltered() {
-      let list = ALL_PRODUCTS;
-      if (currentFilter !== 'الكل') {
-        list = list.filter(p => p.cat === currentFilter);
-      }
-      if (currentSearch) {
-        const q = currentSearch.toLowerCase();
-        list = list.filter(p => 
-          p.name.toLowerCase().includes(q) || 
-          p.cat.toLowerCase().includes(q) || 
-          p.id.toLowerCase().includes(q) ||
-          p.brand.toLowerCase().includes(q)
-        );
-      }
-      return list;
-    }
-    
-    const grid = document.getElementById('grid');
-    let renderedItems = 0;
     let currentFiltered = [];
     
     function renderCard(p) {
       const div = document.createElement('div');
       div.className = 'card';
-      const discount = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
       div.innerHTML = `
         <div style="position: relative;">
-          <img class="card-img" loading="lazy" src="${p.img}" alt="${p.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%231A1A1A%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23D4AF37%22 font-size=%2240%22>${p.cat}</text></svg>'">
-          ${p.oldPrice ? `<div class="card-badge">-${discount}%</div>` : ''}
+          <img class="card-img" loading="lazy" src="${p.img}" alt="${p.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%231A1A1A%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23D4AF37%22 font-size=%2240%22>${p.cat || '?'}</text></svg>'">
         </div>
         <div class="card-body">
-          <div class="card-cat">${p.cat} • ${p.brand}</div>
-          <div class="card-name">${p.name}</div>
-          <div class="card-price">
-            ${p.price.toLocaleString('ar-EG')} ر.ي
-            ${p.oldPrice ? `<span class="old">${p.oldPrice.toLocaleString('ar-EG')}</span>` : ''}
-          </div>
+          <div class="card-cat">${p.cat || 'غير مصنف'} • ${p.brand || 'أبو بشار'}</div>
+          <div class="card-name">${p.name || 'بدون اسم'}</div>
+          <div class="card-price">${(p.price || 0).toLocaleString('ar-EG')} ر.ي</div>
         </div>
       `;
       div.onclick = () => openModal(p);
@@ -482,41 +495,58 @@
     }
     
     function renderPage() {
-      currentFiltered = getFiltered();
-      renderedItems = 0;
+      let list = ALL_PRODUCTS;
+      if (currentFilter !== 'الكل') {
+        list = list.filter(p => p.cat === currentFilter);
+      }
+      if (currentSearch) {
+        const q = currentSearch.toLowerCase();
+        list = list.filter(p => 
+          (p.name || '').toLowerCase().includes(q) || 
+          (p.cat || '').toLowerCase().includes(q) || 
+          (p.id || '').toLowerCase().includes(q) ||
+          (p.brand || '').toLowerCase().includes(q)
+        );
+      }
+      currentFiltered = list;
+      renderedCount = 0;
       grid.innerHTML = '';
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="empty">
+            <div class="icon">📦</div>
+            <h3>لا توجد منتجات</h3>
+            <p>ارفع منتجاتك في لوحة الإدارة أو ابحث بكلمة أخرى</p>
+            <a href="admin.html">📤 ارفع منتجاتك</a>
+          </div>
+        `;
+        document.getElementById('visibleCount').textContent = '0';
+        return;
+      }
       loadMore();
     }
     
     function loadMore() {
-      const end = Math.min(renderedItems + PAGE_SIZE, currentFiltered.length);
+      const end = Math.min(renderedCount + PAGE_SIZE, currentFiltered.length);
       const frag = document.createDocumentFragment();
-      for (let i = renderedItems; i < end; i++) {
+      for (let i = renderedCount; i < end; i++) {
         frag.appendChild(renderCard(currentFiltered[i]));
       }
       grid.appendChild(frag);
-      renderedItems = end;
-      visibleCount = renderedItems;
-      document.getElementById('visibleCount').textContent = visibleCount.toLocaleString('ar-EG');
-      
-      // Auto-load more if grid is short
-      if (renderedItems < currentFiltered.length && renderedItems < 200) {
-        setTimeout(loadMore, 50);
-      }
+      renderedCount = end;
+      document.getElementById('visibleCount').textContent = renderedCount.toLocaleString('ar-EG');
     }
     
     // Infinite scroll
     window.addEventListener('scroll', () => {
-      if (renderedItems >= currentFiltered.length) return;
+      if (renderedCount >= currentFiltered.length) return;
       const scrollPos = window.scrollY + window.innerHeight;
       const threshold = document.body.scrollHeight - 1000;
-      if (scrollPos > threshold) {
-        loadMore();
-      }
+      if (scrollPos > threshold) loadMore();
     });
     
     // Search
-    document.getElementById('searchInput').addEventListener('input', e => {
+    searchInput.addEventListener('input', e => {
       currentSearch = e.target.value;
       renderPage();
     });
@@ -524,14 +554,14 @@
     // Modal
     function openModal(p) {
       document.getElementById('modalImg').src = p.img;
-      document.getElementById('modalCat').textContent = p.cat + ' • ' + p.brand;
-      document.getElementById('modalName').textContent = p.name;
-      document.getElementById('modalPrice').textContent = p.price.toLocaleString('ar-EG') + ' ر.ي';
-      document.getElementById('modalDesc').textContent = p.desc;
-      document.getElementById('modalSize').textContent = p.size;
-      document.getElementById('modalColor').textContent = p.color;
-      document.getElementById('modalBrand').textContent = p.brand;
-      document.getElementById('modalSku').textContent = p.id;
+      document.getElementById('modalCat').textContent = (p.cat || '') + ' • ' + (p.brand || '');
+      document.getElementById('modalName').textContent = p.name || 'منتج';
+      document.getElementById('modalPrice').textContent = (p.price || 0).toLocaleString('ar-EG') + ' ر.ي';
+      document.getElementById('modalDesc').textContent = p.desc || 'منتج فاخر من أبو بشار';
+      document.getElementById('modalSize').textContent = p.size || '-';
+      document.getElementById('modalColor').textContent = p.color || '-';
+      document.getElementById('modalBrand').textContent = p.brand || 'أبو بشار';
+      document.getElementById('modalSku').textContent = p.id || '-';
       document.getElementById('modal').classList.add('show');
     }
     function closeModal() {
@@ -541,8 +571,40 @@
       if (e.target.id === 'modal') closeModal();
     };
     
-    // Initial render
-    renderPage();
+    // === INIT ===
+    (async () => {
+      try {
+        await openDB();
+        const dbProducts = await getAllProducts();
+        if (dbProducts.length > 0) {
+          ALL_PRODUCTS = dbProducts;
+          ctaBanner.style.display = 'none';
+        } else {
+          // Fall back to generated catalog from base products
+          ALL_PRODUCTS = generateCatalogFromBase();
+        }
+      } catch (e) {
+        console.error('DB error, using generated catalog', e);
+        ALL_PRODUCTS = generateCatalogFromBase();
+      }
+      
+      // Build filters
+      const cats = ['الكل', ...new Set(ALL_PRODUCTS.map(p => p.cat).filter(Boolean))];
+      cats.forEach((cat, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'filter' + (idx === 0 ? ' active' : '');
+        btn.textContent = cat;
+        btn.onclick = () => {
+          document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = cat;
+          renderPage();
+        };
+        filtersEl.appendChild(btn);
+      });
+      
+      renderPage();
+    })();
   </script>
 </body>
 </html>
