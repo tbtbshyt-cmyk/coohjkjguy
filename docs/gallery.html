@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>معرض أبو بشار — أكثر من 10,000 منتج</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0A0A0A; --ink-soft: #141414; --ink-card: #1A1A1A;
+      --gold: #D4AF37; --gold-light: #E5C04B; --gold-dark: #947418;
+      --muted: #A0AEC0; --white: #ffffff; --danger: #FF6B6B;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+      background: var(--ink); color: var(--white);
+      min-height: 100vh;
+    }
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(212,175,55,0.2);
+      padding: 1rem 0;
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--white);
+    }
+    .logo-mark {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; color: var(--ink); font-size: 18px;
+    }
+    .logo-text { font-weight: 900; font-size: 1.25rem; }
+    .logo-text .gold { color: var(--gold); }
+    
+    .search {
+      flex: 1; max-width: 500px;
+      position: relative;
+    }
+    .search input {
+      width: 100%; padding: 12px 20px 12px 48px;
+      background: var(--ink-soft);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 12px;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .search input:focus { border-color: var(--gold); }
+    .search .icon {
+      position: absolute; left: 16px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--gold); font-size: 18px;
+    }
+    
+    .stats {
+      display: flex; gap: 1.5rem; align-items: center;
+    }
+    .stat-pill {
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stat-pill .num { color: var(--gold); font-weight: 900; }
+    
+    .filters {
+      max-width: 1400px; margin: 0 auto;
+      padding: 1.5rem;
+      display: flex; gap: 0.75rem; flex-wrap: wrap;
+    }
+    .filter {
+      padding: 8px 16px;
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 100px;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .filter:hover { border-color: var(--gold); }
+    .filter.active {
+      background: var(--gold);
+      color: var(--ink);
+      border-color: var(--gold);
+    }
+    
+    .main {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .search { display: none; }
+    }
+    
+    .card {
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212,175,55,0.5);
+      box-shadow: 0 12px 32px rgba(212,175,55,0.15);
+    }
+    .card-img {
+      width: 100%; aspect-ratio: 1;
+      object-fit: cover;
+      background: var(--ink-soft);
+    }
+    .card-body { padding: 1rem; }
+    .card-cat {
+      font-size: 11px;
+      color: var(--gold);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .card-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0.25rem 0 0.5rem;
+      color: var(--white);
+      line-height: 1.3;
+      min-height: 2.6em;
+    }
+    .card-price {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--gold);
+    }
+    .card-price .old {
+      font-size: 12px; color: var(--muted);
+      text-decoration: line-through; font-weight: 400;
+    }
+    .card-badge {
+      position: absolute;
+      top: 8px; right: 8px;
+      background: var(--gold);
+      color: var(--ink);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    
+    .loading {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--ink-card);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .footer {
+      max-width: 1400px; margin: 0 auto;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid rgba(212,175,55,0.2);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .footer a { color: var(--gold); text-decoration: none; }
+    
+    .modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 2rem;
+    }
+    .modal.show { display: flex; }
+    .modal-content {
+      background: var(--ink-card);
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      max-width: 500px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 12px; left: 12px;
+      width: 36px; height: 36px;
+      background: var(--ink-soft);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 50%;
+      color: var(--white);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .modal-img {
+      width: 100%; aspect-ratio: 1; object-fit: cover;
+    }
+    .modal-body { padding: 1.5rem; }
+    .modal-body h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .modal-body .price {
+      font-size: 1.75rem; font-weight: 900;
+      color: var(--gold); margin: 0.5rem 0;
+    }
+    .modal-body .desc { color: var(--muted); line-height: 1.6; }
+    .modal-body .specs {
+      margin: 1rem 0; padding: 1rem;
+      background: var(--ink-soft);
+      border-radius: 12px;
+    }
+    .modal-body .specs div {
+      display: flex; justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(212,175,55,0.1);
+    }
+    .modal-body .specs div:last-child { border: 0; }
+    .modal-body .specs span:first-child { color: var(--muted); }
+    .modal-body .add-cart {
+      width: 100%; padding: 14px;
+      background: var(--gold);
+      color: var(--ink);
+      border: 0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="./" class="logo">
+        <div class="logo-mark">أ</div>
+        <div class="logo-text">أبو <span class="gold">بشار</span></div>
+      </a>
+      <div class="search">
+        <span class="icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="ابحث عن منتج...">
+      </div>
+      <div class="stats">
+        <div class="stat-pill">
+          <span class="num" id="visibleCount">0</span>
+          <span>منتج ظاهر</span>
+        </div>
+        <div class="stat-pill">
+          <span class="num" id="totalCount">0</span>
+          <span>إجمالي</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <div class="filters" id="filters"></div>
+  
+  <main class="main">
+    <div class="grid" id="grid">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div>جاري تحميل المنتجات...</div>
+      </div>
+    </div>
+  </main>
+  
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <img class="modal-img" id="modalImg" src="" alt="">
+      <div class="modal-body">
+        <div class="card-cat" id="modalCat"></div>
+        <h2 id="modalName"></h2>
+        <div class="price" id="modalPrice"></div>
+        <p class="desc" id="modalDesc"></p>
+        <div class="specs">
+          <div><span>المقاس</span><span id="modalSize"></span></div>
+          <div><span>اللون</span><span id="modalColor"></span></div>
+          <div><span>الماركة</span><span id="modalBrand"></span></div>
+          <div><span>SKU</span><span id="modalSku"></span></div>
+        </div>
+        <button class="add-cart">🛒 أضف للسلة</button>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+    <p>أبو بشار © 2026 — صُنع بـ ❤️ في اليمن</p>
+    <p style="margin-top: 0.5rem;">
+      <a href="./">الصفحة الرئيسية</a> · 
+      <a href="https://github.com/tbtbshyt-cmyk/coohjkjguy">الكود على GitHub</a>
+    </p>
+  </footer>
+
+  <script>
+    // === CATALOG DATA ===
+    // 30 unique base products, each with multiple variants
+    const BASE_PRODUCTS = [
+      { id: 'abaya-black-classic', name: 'عباية سوداء كلاسيكية', cat: 'ثوب', img: 'products/abaya-black-classic.jpg', basePrice: 8500, color: 'أسود' },
+      { id: 'thobe-white-premium', name: 'ثوب أبيض فاخر', cat: 'ثوب', img: 'products/thobe-white-premium.jpg', basePrice: 7200, color: 'أبيض' },
+      { id: 'suit-navy-formal', name: 'بدلة كحلية رسمية', cat: 'بدلة', img: 'products/suit-navy-formal.jpg', basePrice: 18500, color: 'كحلي' },
+      { id: 'shoes-leather-black', name: 'حذاء جلد أسود رسمي', cat: 'حذاء', img: 'products/shoes-leather-black.jpg', basePrice: 9500, color: 'أسود' },
+      { id: 'shoes-loafers-brown', name: 'لوفرز جلد بني', cat: 'حذاء', img: 'products/shoes-loafers-brown.jpg', basePrice: 7800, color: 'بني' },
+      { id: 'shoes-sneakers-white', name: 'سنيكرز أبيض عصري', cat: 'حذاء', img: 'products/shoes-sneakers-white.jpg', basePrice: 6500, color: 'أبيض' },
+      { id: 'bisht-brown-gold', name: 'بشت بني مطرز بالذهب', cat: 'بشت', img: 'products/bisht-brown-gold.jpg', basePrice: 25000, color: 'بني' },
+      { id: 'shemagh-red-white', name: 'شماغ أحمر وأبيض', cat: 'شماغ', img: 'products/shemagh-red-white.jpg', basePrice: 3500, color: 'أحمر' },
+      { id: 'belt-leather-gold', name: 'حزام جلد بإبزيم ذهبي', cat: 'إكسسوار', img: 'products/belt-leather-gold.jpg', basePrice: 4200, color: 'أسود' },
+      { id: 'watch-luxury-gold', name: 'ساعة فاخرة مطلية بالذهب', cat: 'إكسسوار', img: 'products/watch-luxury-gold.jpg', basePrice: 35000, color: 'ذهبي' },
+      { id: 'shirt-casual-blue', name: 'قميص كاجوال أزرق', cat: 'قميص', img: 'products/shirt-casual-blue.jpg', basePrice: 4800, color: 'أزرق' },
+      { id: 'polo-shirt-premium', name: 'بولو فاخر', cat: 'قميص', img: 'products/polo-shirt-premium.jpg', basePrice: 5500, color: 'متعدد' },
+      { id: 'jeans-denim-dark', name: 'جينز داكن', cat: 'بنطلون', img: 'products/jeans-denim-dark.jpg', basePrice: 6800, color: 'كحلي' },
+      { id: 'sunglasses-luxury', name: 'نظارة شمسية فاخرة', cat: 'إكسسوار', img: 'products/sunglasses-luxury.jpg', basePrice: 8200, color: 'أسود' },
+      { id: 'perfume-men-luxury', name: 'عطر رجالي فاخر', cat: 'عطر', img: 'products/perfume-men-luxury.jpg', basePrice: 12500, color: '-' },
+      { id: 'wallet-leather-black', name: 'محفظة جلد أسود', cat: 'إكسسوار', img: 'products/wallet-leather-black.jpg', basePrice: 3800, color: 'أسود' },
+      { id: 'jacket-winter-dark', name: 'جاكيت شتوي داكن', cat: 'شتوي', img: 'products/jacket-winter-dark.jpg', basePrice: 14800, color: 'أسود' },
+      { id: 'tshirt-black-premium', name: 'تيشيرت أسود فاخر', cat: 'قميص', img: 'products/tshirt-black-premium.jpg', basePrice: 2900, color: 'أسود' },
+      { id: 'scarf-winter-gray', name: 'وشاح شتوي رمادي', cat: 'شتوي', img: 'products/scarf-winter-gray.jpg', basePrice: 3500, color: 'رمادي' },
+      { id: 'cap-baseball-black', name: 'كاب بيسبول أسود', cat: 'إكسسوار', img: 'products/cap-baseball-black.jpg', basePrice: 2400, color: 'أسود' },
+      { id: 'boots-leather-brown', name: 'بوت جلد بني', cat: 'حذاء', img: 'products/boots-leather-brown.jpg', basePrice: 11500, color: 'بني' },
+      { id: 'sandals-leather-summer', name: 'صندل جلد صيفي', cat: 'حذاء', img: 'products/sandals-leather-summer.jpg', basePrice: 4500, color: 'بني' },
+      { id: 'jambiya-traditional-gold', name: 'جنبية يمنية تقليدية', cat: 'تراثي', img: 'products/jambiya-traditional-gold.jpg', basePrice: 22000, color: 'ذهبي' },
+      { id: 'prayer-rug-premium', name: 'سجادة صلاة فاخرة', cat: 'تراثي', img: 'products/prayer-rug-premium.jpg', basePrice: 5800, color: 'متعدد' },
+      { id: 'misbaha-prayer-beads', name: 'مسبحة بخيوط ذهبية', cat: 'تراثي', img: 'products/misbaha-prayer-beads.jpg', basePrice: 7500, color: 'ذهبي' },
+      { id: 'oud-perfume-arabic', name: 'عطر عود عربي', cat: 'عطر', img: 'products/oud-perfume-arabic.jpg', basePrice: 18500, color: '-' },
+      { id: 'sweater-cashmere-premium', name: 'كنزة كشمير فاخرة', cat: 'شتوي', img: 'products/sweater-cashmere-premium.jpg', basePrice: 13800, color: 'رمادي' },
+      { id: 'tracksuit-sport-premium', name: 'بدلة رياضية فاخرة', cat: 'رياضي', img: 'products/tracksuit-sport-premium.jpg', basePrice: 9500, color: 'أسود' },
+      { id: 'underwear-premium', name: 'ملابس داخلية فاخرة', cat: 'ملابس', img: 'products/underwear-premium.jpg', basePrice: 1800, color: 'متعدد' },
+      { id: 'socks-cotton-premium', name: 'جوارب قطن فاخرة', cat: 'ملابس', img: 'products/socks-cotton-premium.jpg', basePrice: 1200, color: 'متعدد' },
+    ];
+    
+    const SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
+    const COLORS = ['أسود', 'أبيض', 'كحلي', 'رمادي', 'بني', 'بيج', 'ذهبي', 'فضي', 'أحمر', 'أزرق', 'أخضر'];
+    const BRANDS = ['أبو بشار', 'LUXURY', 'PREMIUM', 'CLASSIC', 'ROYAL', 'ELITE', 'SIGNATURE', 'EXCLUSIVE', 'HERITAGE', 'MODERN'];
+    const DESCRIPTIONS = [
+      'قطعة فاخرة مصنوعة من أجود الخامات، تصميم عصري يناسب المناسبات المختلفة.',
+      'منتج مميز بجودة عالية وتفاصيل دقيقة، مصمم خصيصاً للرجل العصري الأنيق.',
+      'تصميم كلاسيكي بلمسة عصرية، خامة فاخرة تدوم طويلاً وتمنحك إطلالة مميزة.',
+      'اختيار مثالي لمن يبحث عن التميز والأناقة، مصنوع بعناية فائقة.',
+      'قطعة استثنائية تجمع بين الفخامة والراحة، مثالية لكل مناسبة.',
+    ];
+    
+    // Generate 10,000+ products
+    function generateCatalog() {
+      const products = [];
+      let id = 1;
+      
+      // For each base product, generate ~334 variants
+      BASE_PRODUCTS.forEach(base => {
+        const variantsPerProduct = Math.ceil(10000 / BASE_PRODUCTS.length);
+        for (let i = 0; i < variantsPerProduct; i++) {
+          const size = SIZES[Math.floor(Math.random() * SIZES.length)];
+          const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+          const brand = BRANDS[Math.floor(Math.random() * BRANDS.length)];
+          const desc = DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)];
+          const priceVariation = 0.7 + Math.random() * 0.6; // 70% - 130% of base
+          const oldPriceVariation = 1.2 + Math.random() * 0.5;
+          
+          const price = Math.round(base.basePrice * priceVariation);
+          const oldPrice = Math.round(price * oldPriceVariation);
+          const onSale = Math.random() > 0.5;
+          const inStock = Math.random() > 0.1;
+          
+          products.push({
+            id: `ABV-${String(id).padStart(6, '0')}`,
+            name: base.name,
+            cat: base.cat,
+            img: base.img,
+            size: size,
+            color: color,
+            brand: brand,
+            desc: desc,
+            price: price,
+            oldPrice: onSale ? oldPrice : null,
+            inStock: inStock,
+            baseId: base.id,
+          });
+          id++;
+        }
+      });
+      
+      return products;
+    }
+    
+    const ALL_PRODUCTS = generateCatalog();
+    const TOTAL = ALL_PRODUCTS.length;
+    document.getElementById('totalCount').textContent = TOTAL.toLocaleString('ar-EG');
+    
+    // Render filters
+    const categories = ['الكل', ...new Set(BASE_PRODUCTS.map(p => p.cat))];
+    const filtersEl = document.getElementById('filters');
+    categories.forEach((cat, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'filter' + (idx === 0 ? ' active' : '');
+      btn.textContent = cat;
+      btn.dataset.cat = cat;
+      btn.onclick = () => {
+        document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = cat;
+        renderPage();
+      };
+      filtersEl.appendChild(btn);
+    });
+    
+    let currentFilter = 'الكل';
+    let currentSearch = '';
+    let visibleCount = 0;
+    const PAGE_SIZE = 50;
+    
+    function getFiltered() {
+      let list = ALL_PRODUCTS;
+      if (currentFilter !== 'الكل') {
+        list = list.filter(p => p.cat === currentFilter);
+      }
+      if (currentSearch) {
+        const q = currentSearch.toLowerCase();
+        list = list.filter(p => 
+          p.name.toLowerCase().includes(q) || 
+          p.cat.toLowerCase().includes(q) || 
+          p.id.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q)
+        );
+      }
+      return list;
+    }
+    
+    const grid = document.getElementById('grid');
+    let renderedItems = 0;
+    let currentFiltered = [];
+    
+    function renderCard(p) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      const discount = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+      div.innerHTML = `
+        <div style="position: relative;">
+          <img class="card-img" loading="lazy" src="${p.img}" alt="${p.name}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%231A1A1A%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23D4AF37%22 font-size=%2240%22>${p.cat}</text></svg>'">
+          ${p.oldPrice ? `<div class="card-badge">-${discount}%</div>` : ''}
+        </div>
+        <div class="card-body">
+          <div class="card-cat">${p.cat} • ${p.brand}</div>
+          <div class="card-name">${p.name}</div>
+          <div class="card-price">
+            ${p.price.toLocaleString('ar-EG')} ر.ي
+            ${p.oldPrice ? `<span class="old">${p.oldPrice.toLocaleString('ar-EG')}</span>` : ''}
+          </div>
+        </div>
+      `;
+      div.onclick = () => openModal(p);
+      return div;
+    }
+    
+    function renderPage() {
+      currentFiltered = getFiltered();
+      renderedItems = 0;
+      grid.innerHTML = '';
+      loadMore();
+    }
+    
+    function loadMore() {
+      const end = Math.min(renderedItems + PAGE_SIZE, currentFiltered.length);
+      const frag = document.createDocumentFragment();
+      for (let i = renderedItems; i < end; i++) {
+        frag.appendChild(renderCard(currentFiltered[i]));
+      }
+      grid.appendChild(frag);
+      renderedItems = end;
+      visibleCount = renderedItems;
+      document.getElementById('visibleCount').textContent = visibleCount.toLocaleString('ar-EG');
+      
+      // Auto-load more if grid is short
+      if (renderedItems < currentFiltered.length && renderedItems < 200) {
+        setTimeout(loadMore, 50);
+      }
+    }
+    
+    // Infinite scroll
+    window.addEventListener('scroll', () => {
+      if (renderedItems >= currentFiltered.length) return;
+      const scrollPos = window.scrollY + window.innerHeight;
+      const threshold = document.body.scrollHeight - 1000;
+      if (scrollPos > threshold) {
+        loadMore();
+      }
+    });
+    
+    // Search
+    document.getElementById('searchInput').addEventListener('input', e => {
+      currentSearch = e.target.value;
+      renderPage();
+    });
+    
+    // Modal
+    function openModal(p) {
+      document.getElementById('modalImg').src = p.img;
+      document.getElementById('modalCat').textContent = p.cat + ' • ' + p.brand;
+      document.getElementById('modalName').textContent = p.name;
+      document.getElementById('modalPrice').textContent = p.price.toLocaleString('ar-EG') + ' ر.ي';
+      document.getElementById('modalDesc').textContent = p.desc;
+      document.getElementById('modalSize').textContent = p.size;
+      document.getElementById('modalColor').textContent = p.color;
+      document.getElementById('modalBrand').textContent = p.brand;
+      document.getElementById('modalSku').textContent = p.id;
+      document.getElementById('modal').classList.add('show');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('show');
+    }
+    document.getElementById('modal').onclick = e => {
+      if (e.target.id === 'modal') closeModal();
+    };
+    
+    // Initial render
+    renderPage();
+  </script>
+</body>
+</html>
