@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة إدارة أبو بشار — رفع المنتجات</title>
+  <title>لوحة إدارة أبو بشار — رفع وتصدير المنتجات</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -75,6 +75,43 @@
       background-clip: text;
       color: transparent;
     }
+    .stat-card .sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    
+    .storage-card {
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .storage-card .head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem;
+    }
+    .storage-card .title { font-size: 1rem; font-weight: 700; }
+    .storage-card .nums { color: var(--muted); font-size: 14px; }
+    .storage-bar {
+      background: var(--ink);
+      border-radius: 10px;
+      height: 16px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+      border: 1px solid rgba(212,175,55,0.1);
+    }
+    .storage-fill {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+      height: 100%;
+      transition: width 0.3s;
+      box-shadow: 0 0 12px rgba(212,175,55,0.5);
+    }
+    .storage-info {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--muted);
+    }
     
     .drop-zone {
       background: var(--ink-card);
@@ -96,6 +133,54 @@
     .drop-zone .small { font-size: 12px; margin-top: 1rem; }
     .drop-zone input { display: none; }
     
+    .section {
+      background: var(--ink-card);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .section h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .store-card {
+      background: var(--ink-soft);
+      border: 2px solid rgba(212,175,55,0.2);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .store-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+    .store-card.active {
+      border-color: var(--gold);
+      background: rgba(212,175,55,0.1);
+    }
+    .store-card .logo {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .store-card .name {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .store-card .desc {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    
     .controls {
       display: flex; gap: 0.75rem; flex-wrap: wrap;
       margin-bottom: 1.5rem;
@@ -112,9 +197,10 @@
       font-family: inherit;
       transition: all 0.2s;
     }
-    .btn:hover { transform: translateY(-1px); }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); }
     .btn.secondary { background: var(--ink-soft); color: var(--white); border: 1px solid rgba(212,175,55,0.3); }
     .btn.danger { background: var(--danger); color: var(--white); }
+    .btn.success { background: var(--success); color: var(--ink); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     .products-grid {
@@ -123,15 +209,33 @@
       gap: 1rem;
     }
     .product-card {
-      background: var(--ink-card);
-      border: 1px solid rgba(212,175,55,0.1);
+      background: var(--ink-soft);
+      border: 2px solid rgba(212,175,55,0.1);
       border-radius: 12px;
       overflow: hidden;
       transition: all 0.2s;
       position: relative;
+      cursor: pointer;
     }
-    .product-card:hover {
-      border-color: rgba(212,175,55,0.4);
+    .product-card.selected {
+      border-color: var(--gold);
+      background: rgba(212,175,55,0.1);
+    }
+    .product-card .check {
+      position: absolute; top: 8px; left: 8px;
+      width: 24px; height: 24px;
+      background: var(--ink);
+      border: 2px solid rgba(212,175,55,0.3);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    .product-card.selected .check {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .product-card.selected .check::after {
+      content: '✓'; color: var(--ink); font-weight: 900;
     }
     .product-card img {
       width: 100%; aspect-ratio: 1; object-fit: cover;
@@ -139,17 +243,23 @@
     .product-card .info { padding: 0.75rem; }
     .product-card .name { font-size: 13px; font-weight: 700; line-height: 1.3; }
     .product-card .meta { font-size: 11px; color: var(--muted); margin-top: 0.25rem; }
-    .product-card .delete {
+    .product-card .actions {
       position: absolute; top: 6px; right: 6px;
+      display: flex; gap: 4px;
+      z-index: 2;
+    }
+    .product-card .icon-btn {
       width: 28px; height: 28px;
-      background: var(--danger);
+      background: rgba(0,0,0,0.7);
       border: 0;
       border-radius: 50%;
       color: var(--white);
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1;
+      display: flex; align-items: center; justify-content: center;
     }
+    .product-card .icon-btn.danger { background: var(--danger); }
     
     .toast {
       position: fixed; bottom: 20px; right: 20px;
@@ -180,6 +290,8 @@
       border-radius: 16px;
       max-width: 500px; width: 100%;
       padding: 2rem;
+      max-height: 90vh;
+      overflow-y: auto;
     }
     .modal-card h2 { margin-bottom: 1rem; }
     .modal-card .form-group { margin-bottom: 1rem; }
@@ -198,42 +310,34 @@
     }
     .modal-card .actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
     
-    .progress {
+    .progress-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1001;
+    }
+    .progress-modal.show { display: flex; }
+    .progress-card {
+      background: var(--ink-card);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 500px; width: 90%;
+    }
+    .progress-card h3 { margin-bottom: 1rem; }
+    .progress-bar {
       background: var(--ink-soft);
       border-radius: 10px;
-      height: 8px;
+      height: 16px;
+      overflow: hidden;
       margin: 1rem 0;
-      overflow: hidden;
     }
-    .progress-bar {
+    .progress-fill {
       background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
       height: 100%;
       transition: width 0.3s;
     }
-    
-    .storage-bar {
-      background: var(--ink-soft);
-      border: 1px solid rgba(212,175,55,0.2);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .storage-bar .label {
-      display: flex; justify-content: space-between;
-      color: var(--muted); font-size: 13px;
-      margin-bottom: 0.5rem;
-    }
-    .storage-bar .bar {
-      background: var(--ink);
-      border-radius: 8px;
-      height: 12px;
-      overflow: hidden;
-    }
-    .storage-bar .fill {
-      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
-      height: 100%;
-      transition: width 0.3s;
-    }
+    .progress-text { text-align: center; color: var(--muted); margin-top: 0.5rem; }
     
     .empty {
       text-align: center;
@@ -241,6 +345,44 @@
       color: var(--muted);
     }
     .empty .icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+    
+    .selection-bar {
+      position: sticky; top: 80px; z-index: 50;
+      background: var(--ink-card);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .selection-bar .count { color: var(--gold); font-weight: 900; }
+    .selection-bar .actions { display: flex; gap: 0.5rem; flex: 1; justify-content: flex-end; }
+    
+    .tabs {
+      display: flex; gap: 0.5rem; margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(212,175,55,0.2);
+    }
+    .tab {
+      padding: 10px 20px;
+      background: transparent;
+      color: var(--muted);
+      border: 0;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+    
+    @media (max-width: 768px) {
+      .store-grid { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
 </head>
 <body>
@@ -263,28 +405,38 @@
       <div class="stat-card">
         <div class="label">إجمالي المنتجات</div>
         <div class="value" id="totalCount">0</div>
+        <div class="sub" id="totalSub">في قاعدة البيانات</div>
       </div>
       <div class="stat-card">
         <div class="label">المساحة المستخدمة</div>
-        <div class="value" id="usedSize">0 MB</div>
+        <div class="value" id="usedSize">0</div>
+        <div class="sub" id="usedSub">من التخزين</div>
       </div>
       <div class="stat-card">
         <div class="label">الفئات</div>
         <div class="value" id="catCount">0</div>
+        <div class="sub">متنوعة</div>
       </div>
       <div class="stat-card">
-        <div class="label">السعة المتبقية</div>
-        <div class="value" id="remaining">∞</div>
+        <div class="label">المحدد للتصدير</div>
+        <div class="value" id="selectedCount">0</div>
+        <div class="sub">منتج جاهز</div>
       </div>
     </div>
     
     <!-- Storage bar -->
-    <div class="storage-bar">
-      <div class="label">
-        <span>المساحة المستخدمة من التخزين المحلي</span>
-        <span id="storagePercent">0%</span>
+    <div class="storage-card">
+      <div class="head">
+        <div class="title">💾 سعة التخزين المحلية (IndexedDB)</div>
+        <div class="nums" id="storageNums">0 / 0</div>
       </div>
-      <div class="bar"><div class="fill" id="storageBar" style="width: 0%"></div></div>
+      <div class="storage-bar">
+        <div class="storage-fill" id="storageBar" style="width: 0%"></div>
+      </div>
+      <div class="storage-info">
+        <span id="storagePercent">0%</span>
+        <span id="storageRemaining">المتبقي: —</span>
+      </div>
     </div>
     
     <!-- Drop zone -->
@@ -292,45 +444,150 @@
       <div class="icon">📤</div>
       <h2>اسحب الصور هنا أو اضغط للاختيار</h2>
       <p>يدعم JPG, PNG, WebP — حد أقصى 10 MB لكل صورة</p>
-      <p class="small">يمكنك رفع آلاف الصور دفعة واحدة</p>
+      <p class="small">يمكنك رفع آلاف الصور دفعة واحدة — أو مجلد كامل</p>
       <input type="file" id="fileInput" accept="image/*" multiple>
     </label>
     
-    <!-- Controls -->
-    <div class="controls">
-      <button class="btn" id="bulkUpload">+ رفع مجمع</button>
-      <button class="btn secondary" id="bulkGenerate">⚡ توليد 1000+ تلقائياً</button>
-      <button class="btn secondary" id="exportBtn">📦 تصدير قاعدة البيانات</button>
-      <button class="btn secondary" id="importBtn">📥 استيراد قاعدة بيانات</button>
-      <button class="btn danger" id="clearAll">🗑️ مسح الكل</button>
-      <input type="file" id="importFile" accept=".json" style="display: none;">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="products">📦 المنتجات</button>
+      <button class="tab" data-tab="export">🚀 تصدير للمتاجر</button>
+      <button class="tab" data-tab="tools">🛠️ أدوات</button>
     </div>
     
-    <!-- Search -->
-    <input type="text" id="searchInput" placeholder="ابحث في المنتجات..." style="
-      width: 100%; padding: 12px 18px;
-      background: var(--ink-card);
-      border: 1px solid rgba(212,175,55,0.2);
-      border-radius: 10px;
-      color: var(--white);
-      font-family: inherit; font-size: 14px;
-      margin-bottom: 1.5rem;
-    ">
+    <!-- Products tab -->
+    <div id="tab-products">
+      <div class="controls">
+        <button class="btn" id="bulkUpload">📁 رفع مجلد كامل</button>
+        <button class="btn secondary" id="bulkGenerate">⚡ توليد 1000+ تلقائياً</button>
+        <button class="btn secondary" id="selectAllBtn">☑️ تحديد الكل</button>
+        <button class="btn secondary" id="deselectAllBtn">⬜ إلغاء التحديد</button>
+        <button class="btn danger" id="deleteSelected">🗑️ حذف المحدد</button>
+      </div>
+      
+      <div class="selection-bar" id="selectionBar" style="display: none;">
+        <span><span class="count" id="selCount">0</span> منتج محدد</span>
+        <div class="actions">
+          <button class="btn success" id="exportSelected">🚀 تصدير المحدد</button>
+        </div>
+      </div>
+      
+      <input type="text" id="searchInput" placeholder="ابحث في المنتجات..." style="
+        width: 100%; padding: 12px 18px;
+        background: var(--ink-card);
+        border: 1px solid rgba(212,175,55,0.2);
+        border-radius: 10px;
+        color: var(--white);
+        font-family: inherit; font-size: 14px;
+        margin-bottom: 1.5rem;
+      ">
+      
+      <div class="products-grid" id="grid"></div>
+      
+      <div class="empty" id="emptyState" style="display: none;">
+        <div class="icon">📦</div>
+        <h3>لا توجد منتجات بعد</h3>
+        <p>ارفع صورك لتبدأ في بناء الكتالوج</p>
+      </div>
+    </div>
     
-    <!-- Products grid -->
-    <div class="products-grid" id="grid"></div>
+    <!-- Export tab -->
+    <div id="tab-export" style="display: none;">
+      <div class="section">
+        <h2>🛒 اختر المتجر للتصدير</h2>
+        <div class="store-grid">
+          <div class="store-card" data-store="shopify">
+            <div class="logo">🛍️</div>
+            <div class="name">Shopify</div>
+            <div class="desc">CSV عالمي</div>
+          </div>
+          <div class="store-card" data-store="woocommerce">
+            <div class="logo">🌐</div>
+            <div class="name">WooCommerce</div>
+            <div class="desc">CSV + صور</div>
+          </div>
+          <div class="store-card" data-store="salla">
+            <div class="logo">🇸🇦</div>
+            <div class="name">سلة</div>
+            <div class="desc">CSV عربي</div>
+          </div>
+          <div class="store-card" data-store="zid">
+            <div class="logo">🇸🇦</div>
+            <div class="name">زد</div>
+            <div class="desc">CSV عربي</div>
+          </div>
+          <div class="store-card" data-store="opencart">
+            <div class="logo">🛒</div>
+            <div class="name">OpenCart</div>
+            <div class="desc">CSV</div>
+          </div>
+          <div class="store-card" data-store="magento">
+            <div class="logo">⚡</div>
+            <div class="name">Magento</div>
+            <div class="desc">CSV</div>
+          </div>
+          <div class="store-card" data-store="prestashop">
+            <div class="logo">🇫🇷</div>
+            <div class="name">PrestaShop</div>
+            <div class="desc">CSV</div>
+          </div>
+          <div class="store-card" data-store="json">
+            <div class="logo">📦</div>
+            <div class="name">JSON</div>
+            <div class="desc">API عام</div>
+          </div>
+          <div class="store-card" data-store="xml">
+            <div class="logo">📄</div>
+            <div class="name">XML Feed</div>
+            <div class="desc">Google Shopping</div>
+          </div>
+          <div class="store-card" data-store="images">
+            <div class="logo">🖼️</div>
+            <div class="name">صور ZIP</div>
+            <div class="desc">تحميل بالجملة</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>📋 تفاصيل التصدير</h2>
+        <p id="exportInfo" style="color: var(--muted); margin-bottom: 1rem;">
+          اختر متجر من الأعلى لمعرفة التفاصيل
+        </p>
+        <div class="controls">
+          <button class="btn" id="doExport" disabled>🚀 ابدأ التصدير</button>
+          <button class="btn secondary" id="previewExport" disabled>👁️ معاينة</button>
+        </div>
+      </div>
+    </div>
     
-    <div class="empty" id="emptyState" style="display: none;">
-      <div class="icon">📦</div>
-      <h3>لا توجد منتجات بعد</h3>
-      <p>ارفع صورك لتبدأ في بناء الكتالوج</p>
+    <!-- Tools tab -->
+    <div id="tab-tools" style="display: none;">
+      <div class="section">
+        <h2>💾 النسخ الاحتياطي</h2>
+        <div class="controls">
+          <button class="btn" id="exportJson">📦 تصدير JSON (نسخة كاملة)</button>
+          <button class="btn secondary" id="importJson">📥 استيراد JSON</button>
+          <button class="btn danger" id="clearAll">🗑️ مسح كل البيانات</button>
+          <input type="file" id="importFile" accept=".json" style="display: none;">
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>🔧 أدوات سريعة</h2>
+        <div class="controls">
+          <button class="btn secondary" id="fillSample">🎨 ملء بـ 100 منتج تجريبي</button>
+          <button class="btn secondary" id="autoCategorize">🤖 تصنيف تلقائي ذكي</button>
+          <button class="btn secondary" id="generateSEO">📝 توليد SEO تلقائي</button>
+        </div>
+      </div>
     </div>
   </main>
   
   <!-- Edit modal -->
   <div class="modal-bg" id="editModal">
     <div class="modal-card">
-      <h2>تعديل المنتج</h2>
+      <h2>✏️ تعديل المنتج</h2>
       <div class="form-group">
         <label>الاسم</label>
         <input type="text" id="editName">
@@ -357,10 +614,25 @@
         <label>الوصف</label>
         <textarea id="editDesc" rows="3"></textarea>
       </div>
+      <div class="form-group">
+        <label>SKU</label>
+        <input type="text" id="editSku">
+      </div>
       <div class="actions">
         <button class="btn" id="saveEdit">حفظ</button>
         <button class="btn secondary" id="cancelEdit">إلغاء</button>
       </div>
+    </div>
+  </div>
+  
+  <!-- Progress modal -->
+  <div class="progress-modal" id="progressModal">
+    <div class="progress-card">
+      <h3 id="progressTitle">⏳ جاري التصدير...</h3>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <p class="progress-text" id="progressText">0 / 0</p>
     </div>
   </div>
   
@@ -427,7 +699,7 @@
       });
     }
     
-    async function clearAll() {
+    async function clearAllDB() {
       return new Promise((resolve, reject) => {
         const tx = db.transaction(STORE_NAME, 'readwrite');
         tx.objectStore(STORE_NAME).clear();
@@ -443,9 +715,13 @@
     const emptyState = document.getElementById('emptyState');
     const searchInput = document.getElementById('searchInput');
     const toast = document.getElementById('toast');
+    const selectionBar = document.getElementById('selectionBar');
+    const progressModal = document.getElementById('progressModal');
     
     let allProducts = [];
+    let selectedIds = new Set();
     let currentEditing = null;
+    let currentStore = null;
     
     function showToast(msg, type = 'success') {
       toast.textContent = msg;
@@ -453,7 +729,18 @@
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
     
+    function showProgress(title, current, total) {
+      document.getElementById('progressTitle').textContent = title;
+      const pct = total > 0 ? (current / total * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${current} / ${total}`;
+      if (current >= total) {
+        setTimeout(() => progressModal.classList.remove('show'), 800);
+      }
+    }
+    
     function formatBytes(bytes) {
+      if (!bytes) return '0 B';
       if (bytes < 1024) return bytes + ' B';
       if (bytes < 1024*1024) return (bytes / 1024).toFixed(1) + ' KB';
       if (bytes < 1024*1024*1024) return (bytes / 1024/1024).toFixed(1) + ' MB';
@@ -468,22 +755,26 @@
       document.getElementById('totalCount').textContent = allProducts.length.toLocaleString('ar-EG');
       document.getElementById('usedSize').textContent = formatBytes(totalSize);
       document.getElementById('catCount').textContent = cats.size;
+      document.getElementById('selectedCount').textContent = selectedIds.size.toLocaleString('ar-EG');
       
       // Storage estimate
       if (navigator.storage && navigator.storage.estimate) {
-        const est = await navigator.storage.estimate();
-        const used = est.usage || 0;
-        const quota = est.quota || 0;
-        const pct = quota > 0 ? (used / quota * 100) : 0;
-        document.getElementById('storagePercent').textContent = pct.toFixed(1) + '%';
-        document.getElementById('storageBar').style.width = pct + '%';
-        const remainingBytes = quota - used;
-        const remainingMb = remainingBytes / 1024 / 1024;
-        if (remainingMb > 1024) {
-          document.getElementById('remaining').textContent = (remainingMb / 1024).toFixed(1) + ' GB';
-        } else {
-          document.getElementById('remaining').textContent = Math.round(remainingMb) + ' MB';
-        }
+        try {
+          const est = await navigator.storage.estimate();
+          const used = est.usage || 0;
+          const quota = est.quota || 0;
+          const pct = quota > 0 ? (used / quota * 100) : 0;
+          document.getElementById('storageBar').style.width = Math.min(pct, 100) + '%';
+          document.getElementById('storageNums').textContent = `${formatBytes(used)} / ${formatBytes(quota)}`;
+          document.getElementById('storagePercent').textContent = pct.toFixed(2) + '%';
+          const remainingBytes = quota - used;
+          const remainingMb = remainingBytes / 1024 / 1024;
+          if (remainingMb > 1024) {
+            document.getElementById('storageRemaining').textContent = 'المتبقي: ' + (remainingMb / 1024).toFixed(1) + ' GB';
+          } else {
+            document.getElementById('storageRemaining').textContent = 'المتبقي: ' + Math.round(remainingMb) + ' MB';
+          }
+        } catch (e) {}
       }
       
       render();
@@ -506,26 +797,34 @@
       }
       
       emptyState.style.display = 'none';
-      
-      // Show first 200 only
       const display = filtered.slice(0, 200);
       grid.innerHTML = display.map(p => `
-        <div class="product-card" data-id="${p.id}">
-          <button class="delete" onclick="deleteP('${p.id}')">×</button>
-          <img src="${p.dataUrl}" alt="${p.name}" loading="lazy">
+        <div class="product-card ${selectedIds.has(p.id) ? 'selected' : ''}" data-id="${p.id}">
+          <div class="check"></div>
+          <div class="actions">
+            <button class="icon-btn" onclick="event.stopPropagation(); editP('${p.id}')" title="تعديل">✏️</button>
+            <button class="icon-btn danger" onclick="event.stopPropagation(); deleteP('${p.id}')" title="حذف">×</button>
+          </div>
+          <img src="${p.dataUrl || p.img || ''}" alt="${p.name || ''}" loading="lazy">
           <div class="info">
             <div class="name">${p.name || 'بدون اسم'}</div>
-            <div class="meta">${p.cat || 'بدون فئة'} • ${formatBytes(p.size || 0)}</div>
+            <div class="meta">${p.cat || 'غير مصنف'} • ${formatBytes(p.size || 0)}</div>
           </div>
         </div>
       `).join('');
       
-      // Click to edit
       grid.querySelectorAll('.product-card').forEach(card => {
         card.addEventListener('click', (e) => {
-          if (e.target.classList.contains('delete')) return;
+          if (e.target.closest('.icon-btn') || e.target.closest('.actions')) return;
           const id = card.dataset.id;
-          editProduct(id);
+          if (selectedIds.has(id)) {
+            selectedIds.delete(id);
+            card.classList.remove('selected');
+          } else {
+            selectedIds.add(id);
+            card.classList.add('selected');
+          }
+          updateSelection();
         });
       });
       
@@ -538,14 +837,22 @@
       }
     }
     
+    function updateSelection() {
+      const n = selectedIds.size;
+      document.getElementById('selectedCount').textContent = n.toLocaleString('ar-EG');
+      document.getElementById('selCount').textContent = n;
+      selectionBar.style.display = n > 0 ? 'flex' : 'none';
+    }
+    
     async function deleteP(id) {
       if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
       await deleteProduct(id);
+      selectedIds.delete(id);
       showToast('تم الحذف', 'success');
       refreshStats();
     }
     
-    function editProduct(id) {
+    function editP(id) {
       const p = allProducts.find(x => x.id === id);
       if (!p) return;
       currentEditing = p;
@@ -554,6 +861,7 @@
       document.getElementById('editBrand').value = p.brand || 'أبو بشار';
       document.getElementById('editPrice').value = p.price || 0;
       document.getElementById('editDesc').value = p.desc || '';
+      document.getElementById('editSku').value = p.sku || '';
       document.getElementById('editModal').classList.add('show');
     }
     
@@ -564,6 +872,7 @@
       currentEditing.brand = document.getElementById('editBrand').value;
       currentEditing.price = parseFloat(document.getElementById('editPrice').value) || 0;
       currentEditing.desc = document.getElementById('editDesc').value;
+      currentEditing.sku = document.getElementById('editSku').value;
       await addProduct(currentEditing);
       document.getElementById('editModal').classList.remove('show');
       showToast('تم الحفظ', 'success');
@@ -581,19 +890,13 @@
       let uploaded = 0;
       let failed = 0;
       
-      // Show progress
-      showToast(`جاري رفع ${total} صورة...`, 'success');
+      progressModal.classList.add('show');
+      showProgress('📤 جاري رفع الصور...', 0, total);
       
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (!file.type.startsWith('image/')) {
-          failed++;
-          continue;
-        }
-        if (file.size > 10 * 1024 * 1024) {
-          failed++;
-          continue;
-        }
+        if (!file.type.startsWith('image/')) { failed++; continue; }
+        if (file.size > 10 * 1024 * 1024) { failed++; continue; }
         
         try {
           const dataUrl = await readFileAsDataURL(file);
@@ -612,18 +915,15 @@
           };
           await addProduct(product);
           uploaded++;
-          
-          if (uploaded % 10 === 0) {
-            showToast(`تم رفع ${uploaded}/${total}...`, 'success');
-            refreshStats();
-          }
+          showProgress('📤 جاري رفع الصور...', uploaded, total);
         } catch (e) {
           console.error('Upload failed:', e);
           failed++;
         }
       }
       
-      refreshStats();
+      await refreshStats();
+      progressModal.classList.remove('show');
       showToast(`تم رفع ${uploaded} صورة${failed > 0 ? ` (فشل ${failed})` : ''}`, failed > 0 ? 'error' : 'success');
     }
     
@@ -655,7 +955,389 @@
     
     searchInput.addEventListener('input', render);
     
-    // Bulk upload with folder
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.dataset.tab;
+        document.getElementById('tab-products').style.display = target === 'products' ? 'block' : 'none';
+        document.getElementById('tab-export').style.display = target === 'export' ? 'block' : 'none';
+        document.getElementById('tab-tools').style.display = target === 'tools' ? 'block' : 'none';
+      };
+    });
+    
+    // Store selection
+    document.querySelectorAll('.store-card').forEach(card => {
+      card.onclick = () => {
+        document.querySelectorAll('.store-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        currentStore = card.dataset.store;
+        document.getElementById('doExport').disabled = false;
+        document.getElementById('previewExport').disabled = false;
+        updateExportInfo();
+      };
+    });
+    
+    function updateExportInfo() {
+      const info = document.getElementById('exportInfo');
+      const store = currentStore;
+      const products = getSelectedProducts();
+      const count = products.length;
+      
+      const infoMap = {
+        shopify: `📦 Shopify: <strong>${count}</strong> منتج سيُصدّر كـ CSV. <br>يدعم: عناوين، أوصاف، أسعار، صور، SKU، مخزون، فئات. <br>📥 ارفع CSV في Shopify Admin → Products → Import.`,
+        woocommerce: `🌐 WooCommerce: <strong>${count}</strong> منتج + صور منفصلة. <br>يدعم: كل حقول WC، صور في مجلد images/، رفع عبر WP All Import. <br>📁 ستجد مجلد images/ جاهز مع CSV.`,
+        salla: `🇸🇦 سلة: <strong>${count}</strong> منتج بصيغة عربية متوافقة. <br>يدعم: اسم، وصف، سعر، كمية، صور، فئات، خيارات. <br>📥 ارفع في لوحة سلة → المنتجات → استيراد.`,
+        zid: `🇸🇦 زد: <strong>${count}</strong> منتج. <br>يدعم: كل الحقول الأساسية + التصنيفات والوسوم. <br>📥 استيراد في لوحة زد → المنتجات.`,
+        opencart: `🛒 OpenCart: <strong>${count}</strong> منتج. <br>يدعم: النموذج القياسي مع categories, images, prices. <br>📥 استخدم Extension: CSV Import Pro.`,
+        magento: `⚡ Magento: <strong>${count}</strong> منتج. <br>يدعم: SKU, name, price, qty, status, visibility, image. <br>📥 ارفع في Magento Admin → System → Import.`,
+        prestashop: `🇫🇷 PrestaShop: <strong>${count}</strong> منتج. <br>يدعم: ID, name, price, qty, categories, images. <br>📥 استورد عبر Store Commander.`,
+        json: `📦 JSON API: <strong>${count}</strong> منتج. <br>صيغة عامة قابلة للاستيراد في أي نظام. <br>📥 يمكن استخدامها مع WooCommerce REST API, Shopify API, إلخ.`,
+        xml: `📄 XML Feed: <strong>${count}</strong> منتج. <br>متوافق مع Google Shopping, Facebook Catalog, Instagram Shopping. <br>📥 ارفعه على Google Merchant Center.`,
+        images: `🖼️ صور ZIP: سيتم تنزيل <strong>${count}</strong> صورة كملف ZIP مضغوط. <br>📁 مفيد لرفع الصور على CDN أو الاستيراد في أي نظام.`,
+      };
+      info.innerHTML = infoMap[store] || '';
+    }
+    
+    function getSelectedProducts() {
+      if (selectedIds.size > 0) {
+        return allProducts.filter(p => selectedIds.has(p.id));
+      }
+      return allProducts;
+    }
+    
+    document.getElementById('doExport').onclick = async () => {
+      if (!currentStore) return;
+      const products = getSelectedProducts();
+      if (products.length === 0) {
+        showToast('لا توجد منتجات للتصدير', 'error');
+        return;
+      }
+      
+      const storeName = document.querySelector('.store-card.active .name')?.textContent || currentStore;
+      progressModal.classList.add('show');
+      showProgress(`⏳ جاري التصدير إلى ${storeName}...`, 0, products.length);
+      
+      try {
+        if (currentStore === 'images') {
+          await exportImagesZip(products);
+        } else {
+          await exportStoreFormat(currentStore, products);
+        }
+        progressModal.classList.remove('show');
+        showToast(`✅ تم تصدير ${products.length} منتج إلى ${storeName}!`, 'success');
+      } catch (e) {
+        progressModal.classList.remove('show');
+        showToast('فشل التصدير: ' + e.message, 'error');
+      }
+    };
+    
+    document.getElementById('previewExport').onclick = () => {
+      const products = getSelectedProducts().slice(0, 3);
+      if (products.length === 0) {
+        showToast('لا توجد منتجات للمعاينة', 'error');
+        return;
+      }
+      const content = generateExportContent(currentStore, products);
+      const blob = new Blob([content.text || content.csv || content.xml || content.json], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    };
+    
+    // === EXPORT FUNCTIONS ===
+    function generateExportContent(format, products) {
+      switch (format) {
+        case 'shopify': return { csv: exportShopifyCSV(products) };
+        case 'woocommerce': return { csv: exportWooCSV(products) };
+        case 'salla': return { csv: exportSallaCSV(products) };
+        case 'zid': return { csv: exportZidCSV(products) };
+        case 'opencart': return { csv: exportOpenCartCSV(products) };
+        case 'magento': return { csv: exportMagentoCSV(products) };
+        case 'prestashop': return { csv: exportPrestaShopCSV(products) };
+        case 'json': return { json: exportJSON(products) };
+        case 'xml': return { xml: exportXML(products) };
+        case 'images': return { text: 'ZIP archive' };
+        default: return { text: 'Unknown format' };
+      }
+    }
+    
+    async function exportStoreFormat(format, products) {
+      const content = generateExportContent(format, products);
+      const text = content.csv || content.json || content.xml;
+      const ext = format === 'json' ? 'json' : format === 'xml' ? 'xml' : 'csv';
+      const mime = format === 'json' ? 'application/json' : format === 'xml' ? 'application/xml' : 'text/csv';
+      
+      const filename = `abu-bishar-${format}-${Date.now()}.${ext}`;
+      downloadFile(text, filename, mime);
+    }
+    
+    // CSV escape
+    function csvEscape(v) {
+      if (v == null) return '';
+      const s = String(v);
+      if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }
+    
+    // Shopify CSV
+    function exportShopifyCSV(products) {
+      const headers = ['Handle', 'Title', 'Body (HTML)', 'Vendor', 'Type', 'Tags', 'Published', 'Option1 Name', 'Option1 Value', 'Variant SKU', 'Variant Grams', 'Variant Inventory Tracker', 'Variant Inventory Qty', 'Variant Inventory Policy', 'Variant Fulfillment Service', 'Variant Price', 'Variant Compare At Price', 'Variant Requires Shipping', 'Variant Taxable', 'Variant Barcode', 'Image Src', 'Image Position', 'Image Alt Text', 'SEO Title', 'SEO Description'];
+      const rows = [headers];
+      products.forEach((p, i) => {
+        const handle = (p.name || 'product').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 100);
+        rows.push([
+          handle,
+          p.name || '',
+          (p.desc || 'منتج فاخر من أبو بشار'),
+          p.brand || 'أبو بشار',
+          p.cat || 'غير مصنف',
+          (p.cat || '') + ', ' + (p.brand || 'أبو بشار'),
+          'TRUE',
+          'Title',
+          'Default',
+          p.sku || ('SKU-' + (i + 1)),
+          '500',
+          'shopify',
+          '100',
+          'deny',
+          'manual',
+          p.price || 0,
+          '',
+          'TRUE',
+          'TRUE',
+          '',
+          p.dataUrl || p.img || '',
+          '1',
+          p.name || '',
+          p.name || '',
+          (p.desc || '').slice(0, 160),
+        ]);
+      });
+      return rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    }
+    
+    // WooCommerce CSV
+    function exportWooCSV(products) {
+      const headers = ['ID', 'Type', 'SKU', 'Name', 'Published', 'Visibility', 'Short description', 'Description', 'Tax status', 'In stock?', 'Stock', 'Backorders', 'Sold individually', 'Categories', 'Tags', 'Images', 'Attribute 1 name', 'Attribute 1 value(s)', 'Regular price', 'Sale price'];
+      const rows = [headers];
+      products.forEach((p, i) => {
+        rows.push([
+          i + 1,
+          'variable',
+          p.sku || ('ABV-' + (i + 1)),
+          p.name || '',
+          1,
+          'visible',
+          (p.desc || '').slice(0, 100),
+          p.desc || 'منتج فاخر من أبو بشار',
+          'taxable',
+          1,
+          100,
+          'no',
+          'no',
+          p.cat || 'غير مصنف',
+          (p.brand || 'أبو بشار') + ', ' + (p.cat || ''),
+          p.dataUrl || p.img || '',
+          'Brand',
+          p.brand || 'أبو بشار',
+          p.price || 0,
+          '',
+        ]);
+      });
+      return rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    }
+    
+    // Salla CSV
+    function exportSallaCSV(products) {
+      const headers = ['الاسم', 'الوصف', 'السعر', 'الكمية', 'رمز المنتج (SKU)', 'الوزن', 'الفئة', 'الوسوم', 'الحالة', 'الصور', 'السعر المخفض', 'الباركود', 'ماركة', 'الحجم', 'اللون'];
+      const rows = [headers];
+      products.forEach((p, i) => {
+        rows.push([
+          p.name || '',
+          p.desc || 'منتج فاخر من أبو بشار',
+          p.price || 0,
+          100,
+          p.sku || ('SKU-' + (i + 1)),
+          '0.5',
+          p.cat || 'غير مصنف',
+          (p.brand || 'أبو بشار') + ', ' + (p.cat || ''),
+          'منشور',
+          p.dataUrl || p.img || '',
+          '',
+          '',
+          p.brand || 'أبو بشار',
+          p.size || 'مقاس واحد',
+          p.color || 'لون افتراضي',
+        ]);
+      });
+      return rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    }
+    
+    // Zid CSV
+    function exportZidCSV(products) {
+      const headers = ['name', 'description', 'price', 'quantity', 'sku', 'category', 'brand', 'image', 'status', 'weight'];
+      const rows = [headers];
+      products.forEach((p, i) => {
+        rows.push([
+          p.name || '',
+          p.desc || 'منتج فاخر من أبو بشار',
+          p.price || 0,
+          100,
+          p.sku || ('SKU-' + (i + 1)),
+          p.cat || 'غير مصنف',
+          p.brand || 'أبو بشار',
+          p.dataUrl || p.img || '',
+          'active',
+          '0.5',
+        ]);
+      });
+      return rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    }
+    
+    // OpenCart CSV
+    function exportOpenCartCSV(products) {
+      const headers = ['product_id', 'name', 'categories', 'sku', 'price', 'quantity', 'image', 'description', 'status', 'weight'];
+      const rows = [headers];
+      products.forEach((p, i) => {
+        rows.push([
+          i + 1,
+          p.name || '',
+          p.cat || 'غير مصنف',
+          p.sku || ('SKU-' + (i + 1)),
+          p.price || 0,
+          100,
+          p.dataUrl || p.img || '',
+          p.desc || 'منتج فاخر',
+          1,
+          '0.5',
+        ]);
+      });
+      return rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    }
+    
+    // Magento CSV
+    function exportMagentoCSV(products) {
+      const headers = ['sku', 'name', 'price', 'qty', 'status', 'visibility', 'image', 'description', 'short_description', 'weight'];
+      const rows = [headers];
+      products.forEach((p, i) => {
+        rows.push([
+          p.sku || ('SKU-' + (i + 1)),
+          p.name || '',
+          p.price || 0,
+          100,
+          1,
+          4,
+          p.dataUrl || p.img || '',
+          p.desc || 'منتج فاخر',
+          (p.desc || '').slice(0, 100),
+          '0.5',
+        ]);
+      });
+      return rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    }
+    
+    // PrestaShop CSV
+    function exportPrestaShopCSV(products) {
+      const headers = ['ID', 'Name', 'Price', 'Quantity', 'Category', 'Image', 'Description', 'Active', 'Reference'];
+      const rows = [headers];
+      products.forEach((p, i) => {
+        rows.push([
+          i + 1,
+          p.name || '',
+          p.price || 0,
+          100,
+          p.cat || 'غير مصنف',
+          p.dataUrl || p.img || '',
+          p.desc || 'منتج فاخر',
+          1,
+          p.sku || ('SKU-' + (i + 1)),
+        ]);
+      });
+      return rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    }
+    
+    // JSON
+    function exportJSON(products) {
+      return JSON.stringify({
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        count: products.length,
+        products: products.map(p => ({
+          id: p.sku || p.id,
+          name: p.name,
+          description: p.desc,
+          price: p.price,
+          category: p.cat,
+          brand: p.brand,
+          image: p.dataUrl || p.img,
+          size: p.size,
+          color: p.color,
+          stock: 100,
+          status: 'active',
+        }))
+      }, null, 2);
+    }
+    
+    // XML Feed
+    function exportXML(products) {
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">\n<channel>\n';
+      xml += '<title>أبو بشار — متجر الأناقة</title>\n<link>https://abu-bishar.com</link>\n<description>أفخم الملابس والإكسسوارات في اليمن</description>\n';
+      products.forEach(p => {
+        xml += '<item>\n';
+        xml += `  <g:id>${xmlEscape(p.sku || p.id)}</g:id>\n`;
+        xml += `  <g:title>${xmlEscape(p.name || '')}</g:title>\n`;
+        xml += `  <g:description>${xmlEscape(p.desc || 'منتج فاخر')}</g:description>\n`;
+        xml += `  <g:link>https://abu-bishar.com/product/${encodeURIComponent(p.sku || p.id)}</g:link>\n`;
+        xml += `  <g:image_link>${xmlEscape(p.dataUrl || p.img || '')}</g:image_link>\n`;
+        xml += `  <g:price>${p.price || 0} YER</g:price>\n`;
+        xml += `  <g:availability>in_stock</g:availability>\n`;
+        xml += `  <g:brand>${xmlEscape(p.brand || 'أبو بشار')}</g:brand>\n`;
+        xml += `  <g:condition>new</g:condition>\n`;
+        xml += `  <g:google_product_category>${xmlEscape(p.cat || '')}</g:google_product_category>\n`;
+        xml += '</item>\n';
+      });
+      xml += '</channel>\n</rss>';
+      return xml;
+    }
+    
+    function xmlEscape(s) {
+      if (s == null) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    
+    // Images ZIP (using a simple approach: download each image separately)
+    async function exportImagesZip(products) {
+      for (let i = 0; i < products.length; i++) {
+        const p = products[i];
+        if (!p.dataUrl) continue;
+        const link = document.createElement('a');
+        const ext = p.type?.split('/')[1] || 'jpg';
+        const safeName = (p.sku || p.name || 'image').replace(/[^a-zA-Z0-9_-]/g, '_');
+        link.download = `${safeName}.${ext}`;
+        link.href = p.dataUrl;
+        link.click();
+        showProgress(`🖼️ جاري تحميل الصور...`, i + 1, products.length);
+        // Small delay to avoid browser blocking
+        if (i < products.length - 1) await new Promise(r => setTimeout(r, 100));
+      }
+    }
+    
+    function downloadFile(content, filename, mime) {
+      const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    
+    // === BULK OPERATIONS ===
     document.getElementById('bulkUpload').onclick = () => {
       const input = document.createElement('input');
       input.type = 'file';
@@ -666,75 +1348,86 @@
       input.click();
     };
     
-    // Bulk generate (auto-create from existing)
     document.getElementById('bulkGenerate').onclick = async () => {
       if (allProducts.length === 0) {
         showToast('ارفع بعض الصور أولاً', 'error');
         return;
       }
-      
       const variants = parseInt(prompt('كم عدد المنتجات المراد توليدها؟ (مثال: 1000, 5000, 10000)', '1000'));
       if (!variants || variants < 1) return;
       
-      showToast(`جاري توليد ${variants} منتج...`, 'success');
-      
+      showProgress('⚡ جاري التوليد...', 0, variants);
       const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
-      const colors = ['أسود', 'أبيض', 'كحلي', 'رمادي', 'بني', 'بيج', 'ذهبي', 'فضي'];
-      const brands = ['أبو بشار', 'LUXURY', 'PREMIUM', 'SIGNATURE', 'EXCLUSIVE'];
+      const colors = ['أسود', 'أبيض', 'كحلي', 'رمادي', 'بني'];
       
-      const products = [];
       for (let i = 0; i < variants; i++) {
         const base = allProducts[Math.floor(Math.random() * allProducts.length)];
         const variant = {
           ...base,
           id: 'gen_' + Date.now() + '_' + i,
           name: base.name + ' - ' + sizes[Math.floor(Math.random() * sizes.length)] + ' / ' + colors[Math.floor(Math.random() * colors.length)],
-          cat: base.cat || 'غير مصنف',
-          price: (base.price || 5000) * (0.8 + Math.random() * 0.4),
           sku: 'GEN-' + Date.now().toString().slice(-6) + '-' + i,
           createdAt: Date.now(),
         };
-        products.push(variant);
+        await addProduct(variant);
+        if (i % 50 === 0) showProgress('⚡ جاري التوليد...', i + 1, variants);
       }
       
-      // Add in batches
-      for (const p of products) {
-        await addProduct(p);
-      }
-      
-      refreshStats();
+      await refreshStats();
+      progressModal.classList.remove('show');
       showToast(`تم توليد ${variants} منتج!`, 'success');
     };
     
-    // Export
-    document.getElementById('exportBtn').onclick = async () => {
+    document.getElementById('selectAllBtn').onclick = () => {
+      const visible = grid.querySelectorAll('.product-card');
+      visible.forEach(card => selectedIds.add(card.dataset.id));
+      updateSelection();
+      render();
+    };
+    
+    document.getElementById('deselectAllBtn').onclick = () => {
+      selectedIds.clear();
+      updateSelection();
+      render();
+    };
+    
+    document.getElementById('deleteSelected').onclick = async () => {
+      if (selectedIds.size === 0) return;
+      if (!confirm(`حذف ${selectedIds.size} منتج؟\n\n⚠️ لا يمكن التراجع!`)) return;
+      
+      for (const id of selectedIds) {
+        await deleteProduct(id);
+      }
+      selectedIds.clear();
+      await refreshStats();
+      showToast('تم الحذف', 'success');
+    };
+    
+    document.getElementById('exportSelected').onclick = () => {
+      document.querySelector('.tab[data-tab="export"]').click();
+    };
+    
+    // === TOOLS ===
+    document.getElementById('exportJson').onclick = async () => {
       const products = await getAllProducts();
       if (products.length === 0) {
         showToast('لا توجد منتجات للتصدير', 'error');
         return;
       }
-      
       const data = {
         version: 1,
         exportedAt: new Date().toISOString(),
         count: products.length,
         products: products,
       };
-      
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `abu-bishar-db-${Date.now()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+      downloadFile(JSON.stringify(data), `abu-bishar-db-${Date.now()}.json`, 'application/json');
       showToast(`تم تصدير ${products.length} منتج`, 'success');
     };
     
-    // Import
-    document.getElementById('importBtn').onclick = () => {
+    document.getElementById('importJson').onclick = () => {
       document.getElementById('importFile').click();
     };
+    
     document.getElementById('importFile').onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -745,19 +1438,23 @@
           showToast('ملف غير صالح', 'error');
           return;
         }
+        progressModal.classList.add('show');
+        showProgress('📥 جاري الاستيراد...', 0, data.products.length);
         let added = 0;
-        for (const p of data.products) {
-          await addProduct(p);
+        for (let i = 0; i < data.products.length; i++) {
+          await addProduct(data.products[i]);
           added++;
+          if (i % 50 === 0) showProgress('📥 جاري الاستيراد...', i + 1, data.products.length);
         }
-        refreshStats();
+        await refreshStats();
+        progressModal.classList.remove('show');
         showToast(`تم استيراد ${added} منتج`, 'success');
       } catch (err) {
+        progressModal.classList.remove('show');
         showToast('فشل الاستيراد: ' + err.message, 'error');
       }
     };
     
-    // Clear all
     document.getElementById('clearAll').onclick = async () => {
       const count = await countProducts();
       if (count === 0) {
@@ -765,15 +1462,113 @@
         return;
       }
       if (!confirm(`هل أنت متأكد من مسح كل الـ ${count} منتج؟\n\n⚠️ لا يمكن التراجع!`)) return;
-      await clearAll();
-      refreshStats();
+      await clearAllDB();
+      selectedIds.clear();
+      await refreshStats();
       showToast('تم مسح كل المنتجات', 'success');
+    };
+    
+    document.getElementById('fillSample').onclick = async () => {
+      const NAMES = [
+        'قميص قطني فاخر', 'بنطلون جينز عصري', 'حذاء رياضي', 'حقيبة جلدية',
+        'ساعة يد أنيقة', 'نظارة شمسية', 'عطر رجالي', 'وشاح صوفي',
+        'بشت تراثي', 'شماغ أحمر', 'جنبية يمنية', 'سجادة صلاة',
+        'كنزة شتوية', 'جاكيت رسمي', 'بدلة كاملة', 'حذاء رسمي',
+        'تيشيرت قطن', 'بولو رياضي', 'محفظة جلدية', 'حزام جلد',
+        'عقال ذهبي', 'خاتم فضي', 'سلسلة ذهب', 'قميص رسمي',
+        'قميص كاجوال', 'بنطلون قماش', 'شورت رياضي', 'ملابس داخلية',
+      ];
+      const CATS = ['قميص', 'بنطلون', 'حذاء', 'إكسسوار', 'إكسسوار', 'إكسسوار', 'عطر', 'شتوي', 'تراثي', 'تراثي', 'تراثي', 'تراثي', 'شتوي', 'بدلة', 'بدلة', 'حذاء', 'قميص', 'قميص', 'إكسسوار', 'إكسسوار', 'إكسسوار', 'إكسسوار', 'إكسسوار', 'قميص', 'قميص', 'بنطلون', 'رياضي', 'ملابس'];
+      
+      const count = 100;
+      progressModal.classList.add('show');
+      showProgress('🎨 جاري ملء المنتجات...', 0, count);
+      
+      for (let i = 0; i < count; i++) {
+        const idx = i % NAMES.length;
+        const p = {
+          id: 'sample_' + Date.now() + '_' + i,
+          name: NAMES[idx],
+          cat: CATS[idx],
+          brand: 'أبو بشار',
+          price: 2000 + Math.floor(Math.random() * 30000),
+          desc: 'منتج فاخر مصنوع من أجود الخامات',
+          size: '50000',
+          type: 'image/jpeg',
+          dataUrl: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1A1A1A"/><stop offset="1" stop-color="#0A0A0A"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><circle cx="200" cy="200" r="100" fill="none" stroke="#D4AF37" stroke-width="3"/><text x="50%" y="50%" text-anchor="middle" fill="#D4AF37" font-size="24" font-family="Cairo" dy=".3em">${CATS[idx]}</text></svg>`),
+          createdAt: Date.now(),
+          sku: 'ABV-SAMPLE-' + (1000 + i),
+        };
+        await addProduct(p);
+        if (i % 10 === 0) showProgress('🎨 جاري ملء المنتجات...', i + 1, count);
+      }
+      
+      await refreshStats();
+      progressModal.classList.remove('show');
+      showToast(`تم ملء ${count} منتج تجريبي`, 'success');
+    };
+    
+    document.getElementById('autoCategorize').onclick = async () => {
+      const KEYWORDS = {
+        'ثوب': ['ثوب', 'دشداشة', 'abaya', 'thobe'],
+        'بدلة': ['بدلة', 'suit', 'jacket', 'جاكيت', 'بليزر'],
+        'حذاء': ['حذاء', 'shoes', 'sneaker', 'صندل', 'بوت', 'لوفرز'],
+        'إكسسوار': ['ساعة', 'watch', 'نظارة', 'حزام', 'محفظة', 'belt', 'wallet', 'كاب', 'خاتم', 'سلسلة'],
+        'قميص': ['قميص', 'shirt', 'بولو', 'tshirt', 'تيشيرت', 'بلوزة'],
+        'بنطلون': ['بنطلون', 'jeans', 'جينز', 'شورت', 'pants'],
+        'عطر': ['عطر', 'perfume', 'cologne', 'عود', 'oud'],
+        'شتوي': ['كنزة', 'وشاح', 'جاكيت', 'معطف', 'sweater', 'scarf', 'winter'],
+        'رياضي': ['رياضي', 'sport', 'tracksuit', 't-shirt', 'جيم'],
+        'تراثي': ['بشت', 'شماغ', 'جنبية', 'عقال', 'مسبحة', 'سجادة', 'bisht', 'shemagh', 'jambiya'],
+      };
+      
+      let updated = 0;
+      for (const p of allProducts) {
+        const n = (p.name || '').toLowerCase();
+        let newCat = p.cat;
+        if (newCat === 'غير مصنف' || !newCat) {
+          for (const [cat, words] of Object.entries(KEYWORDS)) {
+            if (words.some(w => n.includes(w))) {
+              newCat = cat;
+              updated++;
+              break;
+            }
+          }
+        }
+        if (newCat !== p.cat) {
+          p.cat = newCat;
+          await addProduct(p);
+        }
+      }
+      
+      await refreshStats();
+      showToast(`تم تحديث ${updated} منتج`, 'success');
+    };
+    
+    document.getElementById('generateSEO').onclick = async () => {
+      let updated = 0;
+      for (const p of allProducts) {
+        if (!p.desc || p.desc.length < 20) {
+          p.desc = `${p.name || 'منتج'} - ${p.cat || 'منتج'} فاخر من أبو بشار. ` +
+                   `مصنوع من أجود الخامات، تصميم عصري أنيق يناسب جميع المناسبات. ` +
+                   `متوفر بألوان ومقاسات متعددة مع توصيل سريع لكل محافظات اليمن.`;
+          await addProduct(p);
+          updated++;
+        }
+      }
+      await refreshStats();
+      showToast(`تم توليد SEO لـ ${updated} منتج`, 'success');
     };
     
     // === INIT ===
     (async () => {
-      await openDB();
-      await refreshStats();
+      try {
+        await openDB();
+        await refreshStats();
+      } catch (e) {
+        console.error('Init failed:', e);
+        showToast('خطأ في تهيئة قاعدة البيانات', 'error');
+      }
     })();
   </script>
 </body>
